@@ -110,6 +110,9 @@ function writePropertyValue(value, type, file) {
     case 9:
       file.writeFloat(Number(value))
       break
+    case 11:
+      file.writeFName(value)
+      break
     default:
       throw new Error(`Unsupported property type ${type}`)
   }

@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## Added
+
+- FName values can be changed
+
 ## Changed
 
 - Cells show as green instead of yellow to indicate they've been changed

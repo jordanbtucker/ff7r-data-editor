@@ -86,27 +86,64 @@ ipcRenderer.on('upackage-read', (event, json) => {
           case 7:
           case 9:
             td.contentEditable = 'true'
+
+            td.addEventListener('focus', () => {
+              if (td.dataset.originalText == null) {
+                td.dataset.originalText = td.innerText
+              }
+
+              getSelection().selectAllChildren(td)
+            })
+
+            td.addEventListener('blur', () => {
+              if (td.innerText !== td.dataset.originalText) {
+                td.dataset.isDirty = ''
+              } else {
+                delete td.dataset.isDirty
+              }
+            })
             break
+
+          case 11:
+            td.dataset.dataType = 'fname'
+            td.tabIndex = 0
+
+            td.addEventListener('focus', () => {
+              if (td.dataset.originalText == null) {
+                td.dataset.originalText = td.innerText
+              }
+
+              const select = document.createElement('select')
+
+              for (const name of upackage.uasset.names) {
+                const option = document.createElement('option')
+                option.innerText = name
+                select.appendChild(option)
+              }
+
+              select.value = td.innerText
+
+              select.addEventListener('blur', () => {
+                if (select.value !== td.dataset.originalText) {
+                  td.dataset.isDirty = ''
+                } else {
+                  delete td.dataset.isDirty
+                }
+
+                td.innerText = select.value
+                td.tabIndex = 0
+              })
+
+              td.replaceChildren(select)
+              td.tabIndex = -1
+              select.focus()
+            })
+            break
+
           default:
             td.classList.add('disabled')
         }
       }
-
-      td.addEventListener('focus', () => {
-        if (td.dataset.originalText == null) {
-          td.dataset.originalText = td.innerText
-        }
-
-        getSelection().selectAllChildren(td)
-      })
-
-      td.addEventListener('blur', () => {
-        if (td.innerText !== td.dataset.originalText) {
-          td.dataset.isDirty = ''
-        } else {
-          delete td.dataset.isDirty
-        }
-      })
 
       td.addEventListener('keydown', event => {
         if (event.key === 'ArrowDown' || event.key === 'Enter') {
@@ -115,7 +152,9 @@ ipcRenderer.on('upackage-read', (event, json) => {
           if (nextTR != null) {
             const nextTD = nextTR.cells.item(td.cellIndex)
             nextTD.focus()
-            getSelection().selectAllChildren(nextTD)
+            if (td.contentEditable === 'true') {
+              getSelection().selectAllChildren(nextTD)
+            }
           }
         } else if (event.key === 'ArrowUp') {
           event.preventDefault()
@@ -123,7 +162,9 @@ ipcRenderer.on('upackage-read', (event, json) => {
           if (prevTR != null) {
             const prevTD = prevTR.cells.item(td.cellIndex)
             prevTD.focus()
-            getSelection().selectAllChildren(prevTD)
+            if (td.contentEditable === 'true') {
+              getSelection().selectAllChildren(prevTD)
+            }
           }
         }
       })
