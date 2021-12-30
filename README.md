@@ -20,5 +20,5 @@ See [Releases].
 
 Find me on the [OpenFF7R Discord Server].
 
-[releases]: https://github.com/jordanbtucker/ffviir-data-editor/releases
+[releases]: https://github.com/jordanbtucker/ff7r-data-editor/releases
 [openff7r discord server]: https://discord.com/invite/JkDraPKr
