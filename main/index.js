@@ -93,7 +93,7 @@ async function readUPackage(filename) {
 /**
  * @param {number | string | boolean | number[] | string[] | boolean[]} value
  * @param {number} type
- * @param {import('../lib/ufile')} file
+ * @param {import('../lib/uexport')} file
  */
 function writePropertyValue(value, type, file) {
   switch (type) {
