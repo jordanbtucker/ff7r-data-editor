@@ -15,6 +15,6 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/1.0.0-a.0...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-a.0...HEAD
 [1.0.0-a.0]:
-  https://github.com/jordanbtucker/ff7r-data-editor/releases/tag/1.0.0-a.0
+  https://github.com/jordanbtucker/ff7r-data-editor/releases/tag/v1.0.0-a.0
