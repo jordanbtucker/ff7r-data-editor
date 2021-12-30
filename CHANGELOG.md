@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-a.1] - 2021-12-30
+
 ## Added
 
 - FName values can be changed
@@ -23,6 +25,8 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-a.0...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-a.1...HEAD
+[1.0.0-a.1]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-a.0...v1.0.0-a.1
 [1.0.0-a.0]:
   https://github.com/jordanbtucker/ff7r-data-editor/releases/tag/v1.0.0-a.0
