@@ -8,8 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-a.0] - 2021-12-30
+
 ### Added
 
 - Initial implementation
 
-[unreleased]: https://github.com/jordanbtucker/ffviir-data-editor/commits/main
+[unreleased]:
+  https://github.com/jordanbtucker/ffviir-data-editor/compare/1.0.0-a.0...HEAD
+[1.0.0-a.0]:
+  https://github.com/jordanbtucker/ffviir-data-editor/releases/tag/1.0.0-a.0
