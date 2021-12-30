@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## Changed
+
+- Cells show as green instead of yellow to indicate they've been changed
+
 ## [1.0.0-a.0] - 2021-12-30
 
 ### Added

@@ -16,7 +16,7 @@
 }
 
 #entries td[data-is-dirty] {
-  border: 1px solid var(--bs-warning);
+  border: 1px solid var(--bs-success);
   border-radius: 5px;
 }
 
