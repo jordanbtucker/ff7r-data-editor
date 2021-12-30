@@ -1,0 +1,25 @@
+#entries {
+  border-collapse: separate;
+  border-spacing: 0;
+  position: relative;
+}
+
+#entries thead {
+  background-color: var(--bs-body-bg);
+  border-bottom: 2px solid currentColor;
+  position: sticky;
+  top: 0;
+}
+
+#entries td {
+  border-top: 1px solid transparent;
+}
+
+#entries td[data-is-dirty] {
+  border: 1px solid var(--bs-warning);
+  border-radius: 5px;
+}
+
+#entries td.disabled {
+  color: var(--bs-secondary);
+}
