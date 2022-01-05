@@ -13,9 +13,15 @@
 
 #entries td {
   border-top: 1px solid transparent;
+  white-space: nowrap;
 }
 
-#entries td[data-is-dirty] {
+#entries span {
+  border: 1px solid transparent;
+  padding: 0 0.1em;
+}
+
+#entries [data-is-dirty] {
   border: 1px solid var(--bs-success);
   border-radius: 5px;
 }
