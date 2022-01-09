@@ -10,11 +10,11 @@ and this project adheres to
 
 ## [1.0.0-a.1] - 2021-12-30
 
-## Added
+### Added
 
 - FName values can be changed
 
-## Changed
+### Changed
 
 - Cells show as green instead of yellow to indicate they've been changed
 

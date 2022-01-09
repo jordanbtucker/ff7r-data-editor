@@ -74,10 +74,48 @@ ipcRenderer.on('upackage-read', (event, json) => {
 
     for (const prop of uexp.props) {
       const td = document.createElement('td')
-      td.innerText = entry[prop.name]
+      const value = entry[prop.name]
+      const originalValue = String(value)
 
       if (prop.name.endsWith('_Array')) {
-        td.classList.add('disabled')
+        switch (prop.type) {
+          case 2:
+          case 3:
+          case 4:
+          case 7:
+          case 9:
+            td.replaceChildren()
+
+            for (let j = 0; j < value.length; j++) {
+              const element = value[j]
+              const originalElement = String(element)
+              const span = document.createElement('span')
+              span.innerText = String(element)
+              span.contentEditable = 'true'
+
+              span.addEventListener('focus', () => {
+                getSelection().selectAllChildren(span)
+              })
+
+              span.addEventListener('blur', () => {
+                if (span.innerText !== originalElement) {
+                  span.dataset.isDirty = ''
+                } else {
+                  delete span.dataset.isDirty
+                }
+              })
+
+              td.appendChild(span)
+
+              if (j !== value.length - 1) {
+                td.appendChild(document.createTextNode(', '))
+              }
+            }
+            break
+
+          default:
+            td.classList.add('disabled')
+        }
       } else {
         switch (prop.type) {
           case 2:
@@ -85,18 +123,15 @@ ipcRenderer.on('upackage-read', (event, json) => {
           case 4:
           case 7:
           case 9:
+            td.innerText = String(value)
             td.contentEditable = 'true'
 
             td.addEventListener('focus', () => {
-              if (td.dataset.originalText == null) {
-                td.dataset.originalText = td.innerText
-              }
-
               getSelection().selectAllChildren(td)
             })
 
             td.addEventListener('blur', () => {
-              if (td.innerText !== td.dataset.originalText) {
+              if (td.innerText !== originalValue) {
                 td.dataset.isDirty = ''
               } else {
                 delete td.dataset.isDirty
@@ -105,14 +140,11 @@ ipcRenderer.on('upackage-read', (event, json) => {
             break
 
           case 11:
+            td.innerText = value
             td.dataset.dataType = 'fname'
             td.tabIndex = 0
 
             td.addEventListener('focus', () => {
-              if (td.dataset.originalText == null) {
-                td.dataset.originalText = td.innerText
-              }
-
               const select = document.createElement('select')
 
               for (const name of upackage.uasset.names) {
@@ -124,7 +156,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
               select.value = td.innerText
 
               select.addEventListener('blur', () => {
-                if (select.value !== td.dataset.originalText) {
+                if (select.value !== originalValue) {
                   td.dataset.isDirty = ''
                 } else {
                   delete td.dataset.isDirty
