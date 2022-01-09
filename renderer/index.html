@@ -14,14 +14,16 @@
     <title>Final Fantasy VII Data Editor</title>
   </head>
   <body>
-    <div class="container-fluid">
-      <div id="actions" class="my-2">
+    <div class="container-fluid d-flex flex-column vh-100">
+      <div class="align-self-start my-2">
         <button id="open-file-button" class="btn btn-primary">Open File</button>
         <button id="save-file-button" class="btn btn-primary" disabled>
           Save File
         </button>
       </div>
-      <table id="entries" class="table"></table>
+      <div class="align-self-stretch overflow-auto">
+        <table id="entries" class="table"></table>
+      </div>
     </div>
   </body>
 </html>

@@ -12,6 +12,7 @@ and this project adheres to
 
 - Elements in arrays can be modified, but not the length of the array.
 - Files can be opened and saved via the menu and shortcut keys.
+- The Open and Save buttons stay on screen instead of scrolling.
 
 ## [1.0.0-a.1] - 2021-12-30
 
