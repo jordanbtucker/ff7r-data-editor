@@ -1,5 +1,6 @@
 /.nyc_output
 /coverage
 /dist
+/LICENSE
 /package.json
 /package-lock.json
