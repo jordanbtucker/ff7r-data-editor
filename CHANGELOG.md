@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a bug that caused FString values to not show.
+
 ## [1.0.0-b.0] - 2022-01-09
 
 ### Added

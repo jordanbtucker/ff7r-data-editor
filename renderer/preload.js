@@ -155,6 +155,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
             break
 
           default:
+            td.innerText = value
             td.classList.add('disabled')
         }
       }
