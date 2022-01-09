@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-b.1] - 2022-01-09
+
 ### Fixed
 
 - Fixed a bug that caused FString values to not show.
@@ -37,7 +39,9 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.0...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.1...HEAD
+[1.0.0-b.1]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.0...v1.0.0-b.1
 [1.0.0-b.0]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-a.1...v1.0.0-b.0
 [1.0.0-a.1]:
