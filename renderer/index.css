@@ -27,6 +27,10 @@
   border-radius: 5px;
 }
 
+#entries [data-is-dirty].invalid {
+  border-color: var(--bs-danger);
+}
+
 #entries td.disabled {
   color: var(--bs-secondary);
 }

@@ -80,6 +80,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
           const originalElement = String(element)
           const span = document.createElement('span')
           span.classList.add('element')
+          span.dataset.dataType = String(prop.type)
 
           switch (prop.type) {
             case 2:
@@ -97,8 +98,55 @@ ipcRenderer.on('upackage-read', (event, json) => {
               span.addEventListener('blur', () => {
                 if (span.innerText !== originalElement) {
                   span.dataset.isDirty = ''
+
+                  let number
+                  switch (span.dataset.dataType) {
+                    case '2':
+                    case '3':
+                      number = Number(span.innerText)
+                      if (isNaN(number)) {
+                        span.classList.add('invalid')
+                        span.title = 'Value must be a number'
+                      } else if (number < 0x0 || number > 0x0ff) {
+                        span.classList.add('invalid')
+                        span.title = 'Value must be between 0 and 255'
+                      } else {
+                        span.classList.remove('invalid')
+                        span.removeAttribute('title')
+                      }
+                      break
+                    case '4':
+                      number = Number(span.innerText)
+                      if (isNaN(number)) {
+                        span.classList.add('invalid')
+                        span.title = 'Value must be a number'
+                      } else if (number < -32768 || number > 32767) {
+                        span.classList.add('invalid')
+                        span.title = 'Value must be between -32,768 and 32,768'
+                      } else {
+                        span.classList.remove('invalid')
+                        span.removeAttribute('title')
+                      }
+                      break
+                    case '7':
+                      number = Number(span.innerText)
+                      if (isNaN(number)) {
+                        span.classList.add('invalid')
+                        span.title = 'Value must be a number'
+                      } else if (number < -2147483648 || number > 2147483647) {
+                        span.classList.add('invalid')
+                        span.title =
+                          'Value must be between -2,147,483,648 and 2,147,483,647'
+                      } else {
+                        span.classList.remove('invalid')
+                        span.removeAttribute('title')
+                      }
+                      break
+                  }
                 } else {
                   delete span.dataset.isDirty
+                  span.classList.remove('invalid')
+                  span.removeAttribute('title')
                 }
               })
               break
@@ -220,6 +268,8 @@ ipcRenderer.on('upackage-read', (event, json) => {
           }
         }
       } else {
+        td.dataset.dataType = String(prop.type)
+
         switch (prop.type) {
           case 2:
           case 3:
@@ -236,8 +286,55 @@ ipcRenderer.on('upackage-read', (event, json) => {
             td.addEventListener('blur', () => {
               if (td.innerText !== originalValue) {
                 td.dataset.isDirty = ''
+
+                let number
+                switch (td.dataset.dataType) {
+                  case '2':
+                  case '3':
+                    number = Number(td.innerText)
+                    if (isNaN(number)) {
+                      td.classList.add('invalid')
+                      td.title = 'Value must be a number'
+                    } else if (number < 0x0 || number > 0x0ff) {
+                      td.classList.add('invalid')
+                      td.title = 'Value must be between 0 and 255'
+                    } else {
+                      td.classList.remove('invalid')
+                      td.removeAttribute('title')
+                    }
+                    break
+                  case '4':
+                    number = Number(td.innerText)
+                    if (isNaN(number)) {
+                      td.classList.add('invalid')
+                      td.title = 'Value must be a number'
+                    } else if (number < -32768 || number > 32767) {
+                      td.classList.add('invalid')
+                      td.title = 'Value must be between -32,768 and 32,768'
+                    } else {
+                      td.classList.remove('invalid')
+                      td.removeAttribute('title')
+                    }
+                    break
+                  case '7':
+                    number = Number(td.innerText)
+                    if (isNaN(number)) {
+                      td.classList.add('invalid')
+                      td.title = 'Value must be a number'
+                    } else if (number < -2147483648 || number > 2147483647) {
+                      td.classList.add('invalid')
+                      td.title =
+                        'Value must be between -2,147,483,648 and 2,147,483,647'
+                    } else {
+                      td.classList.remove('invalid')
+                      td.removeAttribute('title')
+                    }
+                    break
+                }
               } else {
                 delete td.dataset.isDirty
+                td.classList.remove('invalid')
+                td.removeAttribute('title')
               }
             })
             break

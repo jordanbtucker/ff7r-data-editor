@@ -102,34 +102,39 @@ async function handleOpenFile() {
 }
 
 ipcMain.on('upackage-saved', async (event, entries) => {
-  const {uexp} = upackage
-  for (let i = 0; i < entries.length; i++) {
-    const entry = entries[i]
-    for (const prop of uexp.props) {
-      if (entry[prop.name] != null) {
-        uexp.pos = uexp.offsets[i][prop.name]
-        if (prop.name.endsWith('_Array')) {
-          const elements = entry[prop.name]
-          for (let j = 0; j < elements.length; j++) {
-            if (elements[j] != null) {
-              writePropertyArrayElement(elements[j], j, prop.type, uexp)
+  try {
+    const {uexp} = upackage
+
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i]
+      for (const prop of uexp.props) {
+        if (entry[prop.name] != null) {
+          uexp.pos = uexp.offsets[i][prop.name]
+          if (prop.name.endsWith('_Array')) {
+            const elements = entry[prop.name]
+            for (let j = 0; j < elements.length; j++) {
+              if (elements[j] != null) {
+                writePropertyArrayElement(elements[j], j, prop.type, uexp)
+              }
             }
+          } else {
+            writePropertyValue(entry[prop.name], prop.type, uexp)
           }
-        } else {
-          writePropertyValue(entry[prop.name], prop.type, uexp)
         }
       }
     }
-  }
 
-  const {canceled, filePath} = await dialog.showSaveDialog({
-    defaultPath: uexp.filename,
-    filters: [{name: 'UExport files', extensions: ['uexp']}],
-  })
+    const {canceled, filePath} = await dialog.showSaveDialog({
+      defaultPath: uexp.filename,
+      filters: [{name: 'UExport files', extensions: ['uexp']}],
+    })
 
-  if (!canceled) {
-    uexp.filename = filePath
-    await uexp.write()
+    if (!canceled) {
+      uexp.filename = filePath
+      await uexp.write()
+    }
+  } catch (err) {
+    dialog.showMessageBoxSync({message: err.stack})
   }
 })
 
@@ -152,19 +157,40 @@ async function readUPackage(filename) {
  * @param {import('../lib/uexport')} file
  */
 function writePropertyValue(value, type, file) {
+  let number
   switch (type) {
     case 2:
     case 3:
-      file.writeByte(Number(value))
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
+      file.writeByte(number)
       break
     case 4:
-      file.writeInt16(Number(value))
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
+      file.writeInt16(number)
       break
     case 7:
-      file.writeInt32(Number(value))
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
+      file.writeInt32(number)
       break
     case 9:
-      file.writeFloat(Number(value))
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
+      file.writeFloat(number)
       break
     case 11:
       file.writeFName(value)
@@ -184,23 +210,44 @@ function writePropertyValue(value, type, file) {
 function writePropertyArrayElement(value, index, type, file) {
   file.pos += 4
 
+  let number
   switch (type) {
     case 2:
     case 3:
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
       file.pos += index
-      file.writeByte(Number(value))
+      file.writeByte(number)
       break
     case 4:
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
       file.pos += index * 2
-      file.writeInt16(Number(value))
+      file.writeInt16(number)
       break
     case 7:
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
       file.pos += index * 4
-      file.writeInt32(Number(value))
+      file.writeInt32(number)
       break
     case 9:
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
       file.pos += index * 4
-      file.writeFloat(Number(value))
+      file.writeFloat(number)
       break
     case 11:
       file.pos += index * 8

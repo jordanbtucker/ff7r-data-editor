@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Numeric values are validated for type and range.
+
 ## [1.0.0-b.3] - 2022-01-09
 
 ### Added
