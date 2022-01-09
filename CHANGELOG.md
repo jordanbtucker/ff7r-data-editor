@@ -54,6 +54,8 @@ and this project adheres to
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.3...HEAD
 [1.0.0-b.3]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.2...v1.0.0-b.3
+[1.0.0-b.2]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.1...v1.0.0-b.2
 [1.0.0-b.1]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.0...v1.0.0-b.1
 [1.0.0-b.0]:
