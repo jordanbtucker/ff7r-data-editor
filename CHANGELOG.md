@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-b.0] - 2022-01-09
+
 ### Added
 
 - Elements in arrays can be modified, but not the length of the array.
@@ -31,7 +33,9 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-a.1...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.0...HEAD
+[1.0.0-b.0]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-a.1...v1.0.0-b.0
 [1.0.0-a.1]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-a.0...v1.0.0-a.1
 [1.0.0-a.0]:
