@@ -24,11 +24,11 @@ and this project adheres to
 
 ### Added
 
-- FName values can be changed
+- FName values can be changed.
 
 ### Changed
 
-- Cells show as green instead of yellow to indicate they've been changed
+- Cells show as green instead of yellow to indicate they've been changed.
 
 ## [1.0.0-a.0] - 2021-12-30
 
