@@ -16,8 +16,9 @@
   white-space: nowrap;
 }
 
-#entries span {
+#entries .element {
   border: 1px solid transparent;
+  display: inline-block;
   padding: 0 0.1em;
 }
 
@@ -28,4 +29,25 @@
 
 #entries td.disabled {
   color: var(--bs-secondary);
+}
+
+#entries.txt-ids .txt-value {
+  display: none;
+}
+
+#entries.txt-values .txt-id {
+  display: none;
+}
+
+#entries span.txt-value {
+  display: inline-block;
+  font-style: italic;
+  max-width: 30em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#entries .element span.txt-value {
+  display: inline;
 }

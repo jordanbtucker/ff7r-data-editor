@@ -15,14 +15,30 @@
   </head>
   <body>
     <div class="container-fluid d-flex flex-column vh-100">
-      <div class="align-self-start my-2">
-        <button id="open-file-button" class="btn btn-primary">Open File</button>
-        <button id="save-file-button" class="btn btn-primary" disabled>
+      <div class="align-self-start d-flex align-items-baseline my-2">
+        <button id="open-file-button" class="btn btn-primary me-1">
+          Open File
+        </button>
+        <button id="save-file-button" class="btn btn-primary mx-1" disabled>
           Save File
         </button>
+        <div class="form-check ms-2">
+          <input
+            type="checkbox"
+            id="show-txt-ids-checkbox"
+            class="form-check-input"
+          />
+          <label class="form-check-label" for="show-txt-ids-checkbox">
+            Show text IDs instead of their values
+            <sup
+              title="For example, show '$Item_W_TSW_0001' instead of 'Buster Sword'"
+              >❔</sup
+            >
+          </label>
+        </div>
       </div>
       <div class="align-self-stretch overflow-auto">
-        <table id="entries" class="table"></table>
+        <table id="entries" class="table txt-values"></table>
       </div>
     </div>
   </body>

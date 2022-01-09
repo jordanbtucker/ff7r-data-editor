@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const txtRes = require('../lib/text-resource.json')
 const pkg = require('../package.json')
 
 /** @type {import('../lib/upackage').IUPackage} */
@@ -14,6 +15,19 @@ window.addEventListener('DOMContentLoaded', () => {
   document
     .getElementById('save-file-button')
     .addEventListener('click', saveFile)
+
+  document
+    .getElementById('show-txt-ids-checkbox')
+    .addEventListener('change', event => {
+      const entries = document.getElementById('entries')
+      if (event.target.checked) {
+        entries.classList.remove('txt-values')
+        entries.classList.add('txt-ids')
+      } else {
+        entries.classList.remove('txt-ids')
+        entries.classList.add('txt-values')
+      }
+    })
 })
 
 ipcRenderer.on('upackage-read', (event, json) => {
@@ -64,6 +78,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
           const element = value[j]
           const originalElement = String(element)
           const span = document.createElement('span')
+          span.classList.add('element')
 
           switch (prop.type) {
             case 2:
@@ -87,30 +102,102 @@ ipcRenderer.on('upackage-read', (event, json) => {
               })
               break
 
+            case 10:
+              if (txtRes[element] != null) {
+                const txtID = document.createElement('span')
+                txtID.classList.add('txt-id')
+                txtID.innerText = element
+                txtID.title = txtRes[element]
+                span.appendChild(txtID)
+
+                const txtValue = document.createElement('span')
+                txtValue.classList.add('txt-value')
+                txtValue.innerText = txtRes[element]
+                txtValue.title = element
+                span.appendChild(txtValue)
+              } else {
+                span.innerText = element
+              }
+
+              td.classList.add('disabled')
+              break
+
             case 11:
-              span.innerText = element
-              span.dataset.dataType = 'fname'
+              if (txtRes[element] != null) {
+                const txtID = document.createElement('span')
+                txtID.classList.add('txt-id')
+                txtID.innerText = element
+                txtID.title = txtRes[element]
+                span.appendChild(txtID)
+
+                const txtValue = document.createElement('span')
+                txtValue.classList.add('txt-value')
+                txtValue.innerText = txtRes[element]
+                txtValue.title = element
+                span.appendChild(txtValue)
+              } else {
+                span.innerText = element
+              }
+
+              span.dataset.value = element
               span.tabIndex = 0
 
               span.addEventListener('focus', () => {
+                const showTxtValues = document
+                  .getElementById('entries')
+                  .classList.contains('txt-values')
+
                 const select = document.createElement('select')
 
                 for (const name of upackage.uasset.names) {
                   const option = document.createElement('option')
-                  option.innerText = name
+                  option.value = name
+
+                  if (txtRes[name] != null) {
+                    if (showTxtValues) {
+                      option.label = txtRes[name]
+                      option.title = name
+                    } else {
+                      option.label = name
+                      option.title = txtRes[name]
+                    }
+                  } else {
+                    option.label = name
+                  }
+
                   select.appendChild(option)
                 }
 
-                select.value = span.innerText
+                select.value = span.dataset.value
 
                 select.addEventListener('blur', () => {
-                  if (select.value !== originalElement) {
+                  const selectedValue = select.value
+
+                  if (selectedValue !== originalElement) {
                     span.dataset.isDirty = ''
                   } else {
                     delete span.dataset.isDirty
                   }
 
-                  span.innerText = select.value
+                  if (txtRes[selectedValue] != null) {
+                    span.replaceChildren()
+
+                    const txtID = document.createElement('span')
+                    txtID.classList.add('txt-id')
+                    txtID.innerText = selectedValue
+                    txtID.title = txtRes[selectedValue]
+                    span.appendChild(txtID)
+
+                    const txtValue = document.createElement('span')
+                    txtValue.classList.add('txt-value')
+                    txtValue.innerText = txtRes[selectedValue]
+                    txtValue.title = selectedValue
+                    span.appendChild(txtValue)
+                  } else {
+                    span.innerText = selectedValue
+                  }
+
+                  span.dataset.value = selectedValue
                   span.tabIndex = 0
                 })
 
@@ -154,30 +241,102 @@ ipcRenderer.on('upackage-read', (event, json) => {
             })
             break
 
+          case 10:
+            if (txtRes[value] != null) {
+              const txtID = document.createElement('span')
+              txtID.classList.add('txt-id')
+              txtID.innerText = value
+              txtID.title = txtRes[value]
+              td.appendChild(txtID)
+
+              const txtValue = document.createElement('span')
+              txtValue.classList.add('txt-value')
+              txtValue.innerText = txtRes[value]
+              txtValue.title = value
+              td.appendChild(txtValue)
+            } else {
+              td.innerText = value
+            }
+
+            td.classList.add('disabled')
+            break
+
           case 11:
-            td.innerText = value
-            td.dataset.dataType = 'fname'
+            if (txtRes[value] != null) {
+              const txtID = document.createElement('span')
+              txtID.classList.add('txt-id')
+              txtID.innerText = value
+              txtID.title = txtRes[value]
+              td.appendChild(txtID)
+
+              const txtValue = document.createElement('span')
+              txtValue.classList.add('txt-value')
+              txtValue.innerText = txtRes[value]
+              txtValue.title = value
+              td.appendChild(txtValue)
+            } else {
+              td.innerText = value
+            }
+
+            td.dataset.value = value
             td.tabIndex = 0
 
             td.addEventListener('focus', () => {
+              const showTxtValues = document
+                .getElementById('entries')
+                .classList.contains('txt-values')
+
               const select = document.createElement('select')
 
               for (const name of upackage.uasset.names) {
                 const option = document.createElement('option')
-                option.innerText = name
+                option.value = name
+
+                if (txtRes[name] != null) {
+                  if (showTxtValues) {
+                    option.label = txtRes[name]
+                    option.title = name
+                  } else {
+                    option.label = name
+                    option.title = txtRes[name]
+                  }
+                } else {
+                  option.label = name
+                }
+
                 select.appendChild(option)
               }
 
-              select.value = td.innerText
+              select.value = td.dataset.value
 
               select.addEventListener('blur', () => {
-                if (select.value !== originalValue) {
+                const selectedValue = select.value
+
+                if (selectedValue !== originalValue) {
                   td.dataset.isDirty = ''
                 } else {
                   delete td.dataset.isDirty
                 }
 
-                td.innerText = select.value
+                if (txtRes[selectedValue] != null) {
+                  td.replaceChildren()
+
+                  const txtID = document.createElement('span')
+                  txtID.classList.add('txt-id')
+                  txtID.innerText = selectedValue
+                  txtID.title = txtRes[selectedValue]
+                  td.appendChild(txtID)
+
+                  const txtValue = document.createElement('span')
+                  txtValue.classList.add('txt-value')
+                  txtValue.innerText = txtRes[selectedValue]
+                  txtValue.title = selectedValue
+                  td.appendChild(txtValue)
+                } else {
+                  td.innerText = selectedValue
+                }
+
+                td.dataset.value = selectedValue
                 td.tabIndex = 0
               })
 
@@ -255,13 +414,16 @@ function saveFile() {
           case 9:
             value = Number(td.innerText)
             break
+          case 11:
+            value = td.dataset.value
+            break
           default:
             value = td.innerText
         }
 
         entry[prop.name] = value
       } else {
-        const spans = td.querySelectorAll('span')
+        const spans = td.querySelectorAll('.element')
         let array
         for (let k = 0; k < spans.length; k++) {
           const span = spans.item(k)
@@ -280,6 +442,9 @@ function saveFile() {
               case 7:
               case 9:
                 element = Number(span.innerText)
+                break
+              case 11:
+                element = span.dataset.value
                 break
               default:
                 element = span.innerText

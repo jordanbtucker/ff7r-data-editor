@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Text IDs can be shown as their values. This is enabled by default.
+
 ## [1.0.0-b.2] - 2022-01-09
 
 ### Added
