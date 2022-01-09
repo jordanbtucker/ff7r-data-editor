@@ -20,6 +20,10 @@
   },
   "author": "Jordan Tucker <jordanbtucker@gmail.com> (https://github.com/jordanbtucker)",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jordanbtucker/ff7r-data-editor/issues"
+  },
+  "homepage": "https://github.com/jordanbtucker/ff7r-data-editor",
   "dependencies": {
     "bootstrap-dark-5": "^1.1.3"
   },
