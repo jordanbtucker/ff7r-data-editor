@@ -11,70 +11,9 @@ window.addEventListener('DOMContentLoaded', () => {
     ipcRenderer.send('open-file')
   })
 
-  document.getElementById('save-file-button').addEventListener('click', () => {
-    const entries = []
-    /** @type {HTMLTableElement} */
-    const table = document.getElementById('entries')
-    const tbody = table.tBodies.item(0)
-    for (let i = 0; i < tbody.rows.length; i++) {
-      const tr = tbody.rows.item(i)
-      const tagTD = tr.cells.item(1)
-      const entry = {_td: tagTD.innerText}
-      for (let j = 2; j < tr.cells.length; j++) {
-        const td = tr.cells.item(j)
-        if (td.dataset.isDirty != null) {
-          const prop = upackage.uexp.props[j - 2]
-          let value
-          switch (prop.type) {
-            case 2:
-            case 3:
-            case 4:
-            case 7:
-            case 9:
-              value = Number(td.innerText)
-              break
-            default:
-              value = td.innerText
-          }
-
-          entry[prop.name] = value
-        } else {
-          const spans = td.querySelectorAll('span')
-          let array
-          for (let k = 0; k < spans.length; k++) {
-            const span = spans.item(k)
-            if (span.dataset.isDirty != null) {
-              const prop = upackage.uexp.props[j - 2]
-
-              if (array == null) {
-                array = Array(upackage.uexp.entries[i][prop.name].length)
-              }
-
-              let element
-              switch (prop.type) {
-                case 2:
-                case 3:
-                case 4:
-                case 7:
-                case 9:
-                  element = Number(span.innerText)
-                  break
-                default:
-                  element = span.innerText
-              }
-
-              array[k] = element
-              entry[prop.name] = array
-            }
-          }
-        }
-      }
-
-      entries.push(entry)
-    }
-
-    ipcRenderer.send('upackage-saved', entries)
-  })
+  document
+    .getElementById('save-file-button')
+    .addEventListener('click', saveFile)
 })
 
 ipcRenderer.on('upackage-read', (event, json) => {
@@ -254,3 +193,73 @@ ipcRenderer.on('upackage-read', (event, json) => {
 
   document.getElementById('save-file-button').disabled = false
 })
+
+ipcRenderer.on('save-file', saveFile)
+
+function saveFile() {
+  // Focus away from entries to ensure they are saved.
+  document.getElementById('save-file-button').focus()
+
+  const entries = []
+  /** @type {HTMLTableElement} */
+  const table = document.getElementById('entries')
+  const tbody = table.tBodies.item(0)
+  for (let i = 0; i < tbody.rows.length; i++) {
+    const tr = tbody.rows.item(i)
+    const tagTD = tr.cells.item(1)
+    const entry = {_td: tagTD.innerText}
+    for (let j = 2; j < tr.cells.length; j++) {
+      const td = tr.cells.item(j)
+      if (td.dataset.isDirty != null) {
+        const prop = upackage.uexp.props[j - 2]
+        let value
+        switch (prop.type) {
+          case 2:
+          case 3:
+          case 4:
+          case 7:
+          case 9:
+            value = Number(td.innerText)
+            break
+          default:
+            value = td.innerText
+        }
+
+        entry[prop.name] = value
+      } else {
+        const spans = td.querySelectorAll('span')
+        let array
+        for (let k = 0; k < spans.length; k++) {
+          const span = spans.item(k)
+          if (span.dataset.isDirty != null) {
+            const prop = upackage.uexp.props[j - 2]
+
+            if (array == null) {
+              array = Array(upackage.uexp.entries[i][prop.name].length)
+            }
+
+            let element
+            switch (prop.type) {
+              case 2:
+              case 3:
+              case 4:
+              case 7:
+              case 9:
+                element = Number(span.innerText)
+                break
+              default:
+                element = span.innerText
+            }
+
+            array[k] = element
+            entry[prop.name] = array
+          }
+        }
+      }
+    }
+
+    entries.push(entry)
+  }
+
+  ipcRenderer.send('upackage-saved', entries)
+}

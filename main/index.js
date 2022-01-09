@@ -1,6 +1,9 @@
 const {join} = require('path')
-const {app, BrowserWindow, ipcMain, dialog} = require('electron')
+const {app, BrowserWindow, ipcMain, dialog, Menu, shell} = require('electron')
+const pkg = require('../package.json')
 const UPackage = require('../lib/upackage')
+
+const isMac = process.platform === 'darwin'
 
 async function main() {
   await app.whenReady()
@@ -19,6 +22,7 @@ main().catch(err => {
   process.exitCode = 1
 })
 
+/** @type {BrowserWindow} */
 let mainWindow
 
 function createMainWindow() {
@@ -29,10 +33,47 @@ function createMainWindow() {
   })
 
   mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+
+  /** @type {(Electron.MenuItemConstructorOptions | Electron.MenuItem)[]} */
+  const menuTemplate = [
+    ...(isMac ? [{role: 'appMenu'}] : []),
+    {
+      label: '&File',
+      submenu: [
+        {label: '&Open', accelerator: 'Control+O', click: handleOpenFile},
+        {label: '&Save', accelerator: 'Control+S', click: handleSaveFile},
+        {type: 'separator'},
+        {label: 'E&xit', role: 'quit', accelerator: 'Alt+F4'},
+      ],
+    },
+    {role: 'editMenu'},
+    {role: 'viewMenu'},
+    {role: 'windowMenu'},
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'View &Project on GitHub',
+          click: async () => {
+            await shell.openExternal(pkg.homepage)
+          },
+        },
+        {
+          label: '&Report a Bug',
+          click: async () => {
+            await shell.openExternal(pkg.bugs.url)
+          },
+        },
+      ],
+    },
+  ]
+
+  const menu = Menu.buildFromTemplate(menuTemplate)
+  Menu.setApplicationMenu(menu)
 }
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (!isMac) {
     app.quit()
   }
 })
@@ -40,7 +81,9 @@ app.on('window-all-closed', () => {
 /** @type {UPackage} */
 let upackage
 
-ipcMain.on('open-file', async event => {
+ipcMain.on('open-file', handleOpenFile)
+
+async function handleOpenFile() {
   const {canceled, filePaths} = await dialog.showOpenDialog({
     filters: [
       {name: 'UAsset files', extensions: ['uasset']},
@@ -51,12 +94,12 @@ ipcMain.on('open-file', async event => {
   if (!canceled) {
     try {
       upackage = await readUPackage(filePaths[0])
-      event.reply('upackage-read', JSON.stringify(upackage))
+      mainWindow.webContents.send('upackage-read', JSON.stringify(upackage))
     } catch (err) {
       dialog.showMessageBoxSync({message: err.stack})
     }
   }
-})
+}
 
 ipcMain.on('upackage-saved', async (event, entries) => {
   const {uexp} = upackage
@@ -89,6 +132,10 @@ ipcMain.on('upackage-saved', async (event, entries) => {
     await uexp.write()
   }
 })
+
+function handleSaveFile() {
+  mainWindow.webContents.send('save-file')
+}
 
 /**
  * @param {string} filename
