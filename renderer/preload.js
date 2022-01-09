@@ -60,18 +60,17 @@ ipcRenderer.on('upackage-read', (event, json) => {
       const originalValue = String(value)
 
       if (prop.name.endsWith('_Array')) {
-        switch (prop.type) {
-          case 2:
-          case 3:
-          case 4:
-          case 7:
-          case 9:
-            td.replaceChildren()
+        for (let j = 0; j < value.length; j++) {
+          const element = value[j]
+          const originalElement = String(element)
+          const span = document.createElement('span')
 
-            for (let j = 0; j < value.length; j++) {
-              const element = value[j]
-              const originalElement = String(element)
-              const span = document.createElement('span')
+          switch (prop.type) {
+            case 2:
+            case 3:
+            case 4:
+            case 7:
+            case 9:
               span.innerText = String(element)
               span.contentEditable = 'true'
 
@@ -86,17 +85,51 @@ ipcRenderer.on('upackage-read', (event, json) => {
                   delete span.dataset.isDirty
                 }
               })
+              break
 
-              td.appendChild(span)
+            case 11:
+              span.innerText = element
+              span.dataset.dataType = 'fname'
+              span.tabIndex = 0
 
-              if (j !== value.length - 1) {
-                td.appendChild(document.createTextNode(', '))
-              }
-            }
-            break
+              span.addEventListener('focus', () => {
+                const select = document.createElement('select')
 
-          default:
-            td.classList.add('disabled')
+                for (const name of upackage.uasset.names) {
+                  const option = document.createElement('option')
+                  option.innerText = name
+                  select.appendChild(option)
+                }
+
+                select.value = span.innerText
+
+                select.addEventListener('blur', () => {
+                  if (select.value !== originalElement) {
+                    span.dataset.isDirty = ''
+                  } else {
+                    delete span.dataset.isDirty
+                  }
+
+                  span.innerText = select.value
+                  span.tabIndex = 0
+                })
+
+                span.replaceChildren(select)
+                span.tabIndex = -1
+                select.focus()
+              })
+              break
+
+            default:
+              span.innerText = String(value)
+              td.classList.add('disabled')
+          }
+
+          td.appendChild(span)
+
+          if (j !== value.length - 1) {
+            td.appendChild(document.createTextNode(', '))
+          }
         }
       } else {
         switch (prop.type) {
@@ -155,7 +188,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
             break
 
           default:
-            td.innerText = value
+            td.innerText = String(value)
             td.classList.add('disabled')
         }
       }

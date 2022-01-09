@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- FName elements in arrays can be modified.
+
 ## [1.0.0-b.1] - 2022-01-09
 
 ### Fixed
