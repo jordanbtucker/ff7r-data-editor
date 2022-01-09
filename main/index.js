@@ -65,7 +65,16 @@ ipcMain.on('upackage-saved', async (event, entries) => {
     for (const prop of uexp.props) {
       if (entry[prop.name] != null) {
         uexp.pos = uexp.offsets[i][prop.name]
-        writePropertyValue(entry[prop.name], prop.type, uexp)
+        if (prop.name.endsWith('_Array')) {
+          const elements = entry[prop.name]
+          for (let j = 0; j < elements.length; j++) {
+            if (elements[j] != null) {
+              writePropertyArrayElement(elements[j], j, prop.type, uexp)
+            }
+          }
+        } else {
+          writePropertyValue(entry[prop.name], prop.type, uexp)
+        }
       }
     }
   }
@@ -111,6 +120,43 @@ function writePropertyValue(value, type, file) {
       file.writeFloat(Number(value))
       break
     case 11:
+      file.writeFName(value)
+      break
+    default:
+      throw new Error(`Unsupported property type ${type}`)
+  }
+}
+
+/**
+ *
+ * @param {number | string | boolean} value
+ * @param {number} index
+ * @param {number} type
+ * @param {import('../lib/uexport')} file
+ */
+function writePropertyArrayElement(value, index, type, file) {
+  file.pos += 4
+
+  switch (type) {
+    case 2:
+    case 3:
+      file.pos += index
+      file.writeByte(Number(value))
+      break
+    case 4:
+      file.pos += index * 2
+      file.writeInt16(Number(value))
+      break
+    case 7:
+      file.pos += index * 4
+      file.writeInt32(Number(value))
+      break
+    case 9:
+      file.pos += index * 4
+      file.writeFloat(Number(value))
+      break
+    case 11:
+      file.pos += index * 8
       file.writeFName(value)
       break
     default:

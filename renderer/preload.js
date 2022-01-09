@@ -23,7 +23,50 @@ window.addEventListener('DOMContentLoaded', () => {
       for (let j = 2; j < tr.cells.length; j++) {
         const td = tr.cells.item(j)
         if (td.dataset.isDirty != null) {
-          entry[upackage.uexp.props[j - 2].name] = td.innerText
+          const prop = upackage.uexp.props[j - 2]
+          let value
+          switch (prop.type) {
+            case 2:
+            case 3:
+            case 4:
+            case 7:
+            case 9:
+              value = Number(td.innerText)
+              break
+            default:
+              value = td.innerText
+          }
+
+          entry[prop.name] = value
+        } else {
+          const spans = td.querySelectorAll('span')
+          let array
+          for (let k = 0; k < spans.length; k++) {
+            const span = spans.item(k)
+            if (span.dataset.isDirty != null) {
+              const prop = upackage.uexp.props[j - 2]
+
+              if (array == null) {
+                array = Array(upackage.uexp.entries[i][prop.name].length)
+              }
+
+              let element
+              switch (prop.type) {
+                case 2:
+                case 3:
+                case 4:
+                case 7:
+                case 9:
+                  element = Number(span.innerText)
+                  break
+                default:
+                  element = span.innerText
+              }
+
+              array[k] = element
+              entry[prop.name] = array
+            }
+          }
         }
       }
 

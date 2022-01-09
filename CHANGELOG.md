@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Elements in arrays can be modified, but not the length of the array.
+
 ## [1.0.0-a.1] - 2021-12-30
 
 ### Added
