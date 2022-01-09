@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-b.2] - 2022-01-09
+
 ### Added
 
 - FName elements in arrays can be modified.
@@ -43,7 +45,9 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.1...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.2...HEAD
+[1.0.0-b.2]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.1...v1.0.0-b.2
 [1.0.0-b.1]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.0...v1.0.0-b.1
 [1.0.0-b.0]:
