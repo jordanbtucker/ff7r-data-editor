@@ -8,7 +8,7 @@ Modify `*.uasset` and `*.uexp` files for Final Fantasy VII Remake.
 - Only makes changes to `*.uexp` files.
 - Only makes changes that do not require changing file size.
   - Numeric values and FNames.
-  - Numeric array elements.
+  - Numeric and FName array elements.
 - Game files must be unpacked before use.
 - This is a WIP in beta status. Use at your own risk.
 
