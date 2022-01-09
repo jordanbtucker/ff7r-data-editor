@@ -1,3 +1,4 @@
+const {basename} = require('path')
 const {ipcRenderer} = require('electron')
 const txtRes = require('../lib/text-resource.json')
 const pkg = require('../package.json')
@@ -384,6 +385,9 @@ ipcRenderer.on('upackage-read', (event, json) => {
 
   table.replaceChildren(thead, tbody)
 
+  document.title = `${basename(upackage.uasset.filename)} - ${
+    pkg.description
+  } v${pkg.version}`
   document.getElementById('save-file-button').disabled = false
 })
 
