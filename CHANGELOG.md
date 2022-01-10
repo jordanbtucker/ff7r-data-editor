@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-b.5] - 2022-01-09
+
 ### Fixed
 
 - Incorrect characters in text values are fixed.
@@ -61,7 +63,9 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.4...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.5...HEAD
+[1.0.0-b.5]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.4...v1.0.0-b.5
 [1.0.0-b.4]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.3...v1.0.0-b.4
 [1.0.0-b.3]:
