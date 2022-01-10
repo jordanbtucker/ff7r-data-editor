@@ -1,6 +1,6 @@
 {
   "name": "ff7r-data-editor",
-  "version": "1.0.0-b.3",
+  "version": "1.0.0-b.4",
   "description": "Final Fantasy VII Remake Data Editor",
   "private": true,
   "main": "main/index.js",

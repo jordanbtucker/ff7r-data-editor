@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-b.4] - 2022-01-09
+
 ### Added
 
 - Numeric values are validated for type and range.
@@ -55,7 +57,9 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.3...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.4...HEAD
+[1.0.0-b.4]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.3...v1.0.0-b.4
 [1.0.0-b.3]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.2...v1.0.0-b.3
 [1.0.0-b.2]:
