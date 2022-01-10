@@ -8,6 +8,10 @@
     />
     <link
       rel="stylesheet"
+      href="../node_modules/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
       href="../node_modules/bootstrap-dark-5/dist/css/bootstrap-dark.min.css"
     />
     <link href="./index.css" rel="stylesheet" />
@@ -50,5 +54,37 @@
         <button type="button" class="btn-close me-2 m-auto"></button>
       </div>
     </div>
+    <form
+      id="find-form"
+      class="position-absolute top-0 end-0 mt-2 me-2 d-none align-items-baseline"
+    >
+      <input id="find-textbox" class="form-control me-1" placeholder="Find" />
+      <div id="find-info" class="mx-1">
+        <span id="find-index">0</span>/<span id="find-total">0</span>
+      </div>
+      <div class="btn-group btn-group-sm mx-1">
+        <button
+          id="find-prev-button"
+          type="button"
+          class="btn btn-outline-secondary"
+        >
+          <i class="bi bi-chevron-up"></i>
+        </button>
+        <button
+          id="find-next-button"
+          type="submit"
+          class="btn btn-outline-secondary"
+        >
+          <i class="bi bi-chevron-down"></i>
+        </button>
+      </div>
+      <button
+        id="find-close-button"
+        type="button"
+        class="btn btn-sm btn-outline-secondary ms-1"
+      >
+        <i class="bi bi-x"></i>
+      </button>
+    </form>
   </body>
 </html>

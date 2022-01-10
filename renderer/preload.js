@@ -29,6 +29,8 @@ window.addEventListener('DOMContentLoaded', () => {
         entries.classList.add('txt-values')
       }
     })
+
+  setupFind()
 })
 
 ipcRenderer.on('upackage-read', (event, json) => {
@@ -575,3 +577,161 @@ ipcRenderer.on('upackage-saved', (event, filename) => {
     toast.classList.remove('show')
   })
 })
+
+function setupFind() {
+  const found = []
+  let foundIndex = 0
+  const entries = document.getElementById('entries')
+  const form = document.getElementById('find-form')
+  const textbox = document.getElementById('find-textbox')
+  const indexSpan = document.getElementById('find-index')
+  const totalSpan = document.getElementById('find-total')
+  const prevButton = document.getElementById('find-prev-button')
+  const closeButton = document.getElementById('find-close-button')
+
+  function findAll() {
+    const regexp = new RegExp(escapeRegExp(textbox.value), 'i')
+    const tbody = entries.tBodies.item(0)
+    if (tbody != null) {
+      found.length = 0
+      for (let i = 0; i < tbody.rows.length; i++) {
+        const row = tbody.rows.item(i)
+        for (let j = 0; j < row.cells.length; j++) {
+          const cell = row.cells.item(j)
+          cell.classList.remove('current')
+          const isFound =
+            textbox.value.length > 0 && regexp.test(cell.innerText)
+          if (isFound) {
+            cell.classList.add('found')
+            found.push(cell)
+          } else {
+            cell.classList.remove('found')
+          }
+        }
+      }
+
+      totalSpan.innerText = String(found.length)
+
+      if (found.length > 0) {
+        setFound()
+      } else {
+        indexSpan.innerText = String(0)
+      }
+    }
+  }
+
+  function findNext() {
+    if (found.length > 1) {
+      found[foundIndex].classList.remove('current')
+      if (++foundIndex === found.length) {
+        foundIndex = 0
+      }
+
+      setFound()
+    }
+  }
+
+  function findPrev() {
+    if (found.length > 1) {
+      found[foundIndex].classList.remove('current')
+      if (--foundIndex < 0) {
+        foundIndex = found.length - 1
+      }
+
+      setFound()
+    }
+  }
+
+  function setFound() {
+    indexSpan.innerText = String(foundIndex + 1)
+    const current = found[foundIndex]
+    current.classList.add('current')
+    setImmediate(() => {
+      current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center',
+      })
+    })
+  }
+
+  function close() {
+    const tbody = entries.tBodies.item(0)
+    if (tbody != null) {
+      for (let i = 0; i < tbody.rows.length; i++) {
+        const row = tbody.rows.item(i)
+        for (let j = 0; j < row.cells.length; j++) {
+          const cell = row.cells.item(j)
+          cell.classList.remove('current')
+          cell.classList.remove('found')
+        }
+      }
+    }
+
+    form.classList.remove('d-flex')
+    form.classList.add('d-none')
+  }
+
+  ipcRenderer.on('find', () => {
+    form.classList.remove('d-none')
+    form.classList.add('d-flex')
+    findAll()
+    textbox.focus()
+    textbox.select()
+  })
+
+  form.addEventListener('submit', event => {
+    event.preventDefault()
+    findNext()
+  })
+
+  form.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      close()
+    }
+  })
+
+  form.addEventListener('focusout', () => {
+    setImmediate(() => {
+      if (
+        !form.contains(document.activeElement) &&
+        (document.activeElement.contentEditable === 'true' ||
+          document.activeElement.tagName === 'SELECT')
+      ) {
+        close()
+      }
+    })
+  })
+
+  textbox.addEventListener('input', () => {
+    foundIndex = 0
+    findAll()
+  })
+
+  textbox.addEventListener('keydown', event => {
+    if (event.shiftKey) {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        findPrev()
+      } else if (event.key === 'Tab') {
+        event.preventDefault()
+        closeButton.focus()
+      }
+    }
+  })
+
+  prevButton.addEventListener('click', findPrev)
+
+  closeButton.addEventListener('click', close)
+
+  closeButton.addEventListener('keydown', event => {
+    if (!event.shiftKey && event.key === 'Tab') {
+      event.preventDefault()
+      textbox.focus()
+    }
+  })
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$0')
+}

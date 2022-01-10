@@ -38,28 +38,43 @@ function createMainWindow() {
   const menuTemplate = [
     ...(isMac ? [{role: 'appMenu'}] : []),
     {
-      label: '&File',
+      label: 'File',
       submenu: [
-        {label: '&Open', accelerator: 'Control+O', click: handleOpenFile},
-        {label: '&Save', accelerator: 'Control+S', click: handleSaveFile},
+        {label: 'Open...', accelerator: 'Control+O', click: handleOpenFile},
+        {label: 'Save...', accelerator: 'Control+S', click: handleSaveFile},
         {type: 'separator'},
-        {label: 'E&xit', role: 'quit', accelerator: 'Alt+F4'},
+        {role: 'quit'},
       ],
     },
-    {role: 'editMenu'},
+    {
+      role: 'editMenu',
+      submenu: [
+        {role: 'undo'},
+        {role: 'redo'},
+        {type: 'separator'},
+        {role: 'cut'},
+        {role: 'copy'},
+        {role: 'paste'},
+        {role: 'delete'},
+        {type: 'separator'},
+        {role: 'selectAll'},
+        {type: 'separator'},
+        {label: 'Find...', accelerator: 'Control+F', click: handleFind},
+      ],
+    },
     {role: 'viewMenu'},
     {role: 'windowMenu'},
     {
       role: 'help',
       submenu: [
         {
-          label: 'View &Project on GitHub',
+          label: 'View Project on GitHub...',
           click: async () => {
             await shell.openExternal(pkg.homepage)
           },
         },
         {
-          label: '&Report a Bug',
+          label: 'Report a Bug...',
           click: async () => {
             await shell.openExternal(pkg.bugs.url)
           },
@@ -142,6 +157,10 @@ ipcMain.on('upackage-saved', async (event, entries) => {
 
 function handleSaveFile() {
   mainWindow.webContents.send('save-file')
+}
+
+function handleFind() {
+  mainWindow.webContents.send('find')
 }
 
 /**

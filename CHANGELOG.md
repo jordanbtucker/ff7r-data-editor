@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Text can be search for via Edit > Find.
+
 ## [1.0.0-b.5] - 2022-01-09
 
 ### Fixed

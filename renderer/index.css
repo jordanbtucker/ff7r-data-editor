@@ -55,3 +55,13 @@
 #entries .element span.txt-value {
   display: inline;
 }
+
+#entries .found {
+  background-color: #ff0 !important;
+  color: #000 !important;
+}
+
+#entries .found.current {
+  background-color: #ff9632 !important;
+  color: #000 !important;
+}
