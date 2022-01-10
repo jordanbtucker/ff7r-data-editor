@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Incorrect characters in text values are fixed.
+
 ## [1.0.0-b.4] - 2022-01-09
 
 ### Added
