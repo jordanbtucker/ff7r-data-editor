@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-b.6] - 2022-01-10
+
 ### Added
 
 - Text can be search for via Edit > Find.
@@ -67,7 +69,9 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.5...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.6...HEAD
+[1.0.0-b.6]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.5...v1.0.0-b.6
 [1.0.0-b.5]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.4...v1.0.0-b.5
 [1.0.0-b.4]:
