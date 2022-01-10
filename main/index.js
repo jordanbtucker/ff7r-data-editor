@@ -133,6 +133,8 @@ ipcMain.on('upackage-saved', async (event, entries) => {
       uexp.filename = filePath
       await uexp.write()
     }
+
+    event.reply('upackage-saved', upackage.uexpFilename)
   } catch (err) {
     dialog.showMessageBoxSync({message: err.stack})
   }

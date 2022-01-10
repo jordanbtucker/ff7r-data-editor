@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
+      content="default-src 'self'; script-src 'self'; img-src 'self' data:"
     />
     <link
       rel="stylesheet"
@@ -39,6 +39,15 @@
       </div>
       <div class="align-self-stretch overflow-auto">
         <table id="entries" class="table txt-values"></table>
+      </div>
+    </div>
+    <div
+      id="save-file-toast"
+      class="toast position-absolute bottom-0 end-0 me-2 mb-2 align-items-center"
+    >
+      <div class="d-flex">
+        <div class="toast-body"></div>
+        <button type="button" class="btn-close me-2 m-auto"></button>
       </div>
     </div>
   </body>

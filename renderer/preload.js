@@ -563,3 +563,15 @@ function saveFile() {
 
   ipcRenderer.send('upackage-saved', entries)
 }
+
+ipcRenderer.on('upackage-saved', (event, filename) => {
+  const toast = document.getElementById('save-file-toast')
+  const toastBody = toast.querySelector('.toast-body')
+  toastBody.innerText = `${basename(filename)} has been saved.`
+  toast.classList.add('show')
+
+  const closeButton = toast.querySelector('.btn-close')
+  closeButton.addEventListener('click', () => {
+    toast.classList.remove('show')
+  })
+})
