@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-b.7] - 2022-01-11
+
 ### Changed
 
 - The index column stays in place to help you keep track of which row you're
@@ -78,7 +80,9 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.6...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.7...HEAD
+[1.0.0-b.7]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.6...v1.0.0-b.7
 [1.0.0-b.6]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.5...v1.0.0-b.6
 [1.0.0-b.5]:
