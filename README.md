@@ -16,9 +16,15 @@ Modify `*.uasset` and `*.uexp` files for Final Fantasy VII Remake.
 
 See [Releases].
 
+## Getting Started
+
+See [Getting Started].
+
 ## Feedback
 
 Find me on the [OpenFF7R Discord Server] as jordanbtucker#5561.
 
 [releases]: https://github.com/jordanbtucker/ff7r-data-editor/releases
+[getting started]:
+  https://github.com/jordanbtucker/ff7r-data-editor/wiki/Getting-Started
 [openff7r discord server]: https://discord.com/invite/JkDraPKr
