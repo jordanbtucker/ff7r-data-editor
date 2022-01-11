@@ -4,11 +4,21 @@
   position: relative;
 }
 
-#entries thead {
+#entries thead th {
   background-color: var(--bs-body-bg);
   border-bottom: 2px solid currentColor;
   position: sticky;
   top: 0;
+}
+
+#entries thead th:first-child {
+  z-index: 1;
+}
+
+#entries tr th:first-child {
+  background-color: var(--bs-body-bg);
+  position: sticky;
+  left: 0;
 }
 
 #entries td {

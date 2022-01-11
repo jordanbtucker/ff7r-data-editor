@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- The index column stays in place to help you keep track of which row you're
+  editing.
+
 ## [1.0.0-b.6] - 2022-01-10
 
 ### Added
