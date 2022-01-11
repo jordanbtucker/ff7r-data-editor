@@ -13,6 +13,10 @@ and this project adheres to
 - The index column stays in place to help you keep track of which row you're
   editing.
 
+### Fixed
+
+- A bug that caused arrays to be saved incorrectly is fixed.
+
 ## [1.0.0-b.6] - 2022-01-10
 
 ### Added

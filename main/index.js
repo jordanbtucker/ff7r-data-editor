@@ -124,15 +124,16 @@ ipcMain.on('upackage-saved', async (event, entries) => {
       const entry = entries[i]
       for (const prop of uexp.props) {
         if (entry[prop.name] != null) {
-          uexp.pos = uexp.offsets[i][prop.name]
           if (prop.name.endsWith('_Array')) {
             const elements = entry[prop.name]
             for (let j = 0; j < elements.length; j++) {
               if (elements[j] != null) {
+                uexp.pos = uexp.offsets[i][prop.name]
                 writePropertyArrayElement(elements[j], j, prop.type, uexp)
               }
             }
           } else {
+            uexp.pos = uexp.offsets[i][prop.name]
             writePropertyValue(entry[prop.name], prop.type, uexp)
           }
         }
