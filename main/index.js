@@ -1,5 +1,5 @@
 const {dirname, join} = require('path')
-const {app, BrowserWindow, ipcMain, dialog, Menu, shell} = require('electron')
+const {app, BrowserWindow, dialog, ipcMain, Menu, shell} = require('electron')
 const {default: Conf} = require('conf')
 const pkg = require('../package.json')
 const UPackage = require('../lib/upackage')
