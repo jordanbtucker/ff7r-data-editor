@@ -1,7 +1,10 @@
-const {join} = require('path')
+const {dirname, join} = require('path')
 const {app, BrowserWindow, ipcMain, dialog, Menu, shell} = require('electron')
+const {default: Conf} = require('conf')
 const pkg = require('../package.json')
 const UPackage = require('../lib/upackage')
+
+const conf = new Conf()
 
 const isMac = process.platform === 'darwin'
 
@@ -106,6 +109,7 @@ ipcMain.on('open-file', handleOpenFile)
 
 async function handleOpenFile() {
   const {canceled, filePaths} = await dialog.showOpenDialog({
+    defaultPath: conf.get('upackageOpenFileDialogDefaultPath'),
     filters: [
       {name: 'UAsset files', extensions: ['uasset']},
       {name: 'All files', extensions: ['*']},
@@ -118,6 +122,7 @@ async function handleOpenFile() {
       mainWindow.webContents.send('upackage-read', JSON.stringify(upackage))
       const menu = Menu.getApplicationMenu()
       menu.getMenuItemById('save').enabled = true
+      conf.set('upackageOpenFileDialogDefaultPath', dirname(filePaths[0]))
     } catch (err) {
       dialog.showMessageBoxSync({message: err.stack})
     }

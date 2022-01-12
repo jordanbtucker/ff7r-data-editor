@@ -26,7 +26,8 @@
   "homepage": "https://github.com/jordanbtucker/ff7r-data-editor",
   "dependencies": {
     "bootstrap-dark-5": "^1.1.3",
-    "bootstrap-icons": "^1.7.2"
+    "bootstrap-icons": "^1.7.2",
+    "conf": "^10.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.2.1",

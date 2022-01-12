@@ -11,6 +11,7 @@ and this project adheres to
 ### Changed
 
 - The Find feature works on headers now.
+- The Open File window now remembers the last used location.
 
 ### Fixed
 
