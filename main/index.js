@@ -41,7 +41,13 @@ function createMainWindow() {
       label: 'File',
       submenu: [
         {label: 'Open...', accelerator: 'Control+O', click: handleOpenFile},
-        {label: 'Save...', accelerator: 'Control+S', click: handleSaveFile},
+        {
+          label: 'Save...',
+          id: 'save',
+          enabled: false,
+          accelerator: 'Control+S',
+          click: handleSaveFile,
+        },
         {type: 'separator'},
         {role: 'quit'},
       ],
@@ -110,6 +116,8 @@ async function handleOpenFile() {
     try {
       upackage = await readUPackage(filePaths[0])
       mainWindow.webContents.send('upackage-read', JSON.stringify(upackage))
+      const menu = Menu.getApplicationMenu()
+      menu.getMenuItemById('save').enabled = true
     } catch (err) {
       dialog.showMessageBoxSync({message: err.stack})
     }
