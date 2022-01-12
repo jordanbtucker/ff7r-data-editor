@@ -581,6 +581,7 @@ ipcRenderer.on('upackage-saved', (event, filename) => {
 function setupFind() {
   const found = []
   let foundIndex = 0
+  /** @type {HTMLTableElement} */
   const entries = document.getElementById('entries')
   const form = document.getElementById('find-form')
   const textbox = document.getElementById('find-textbox')
@@ -591,22 +592,16 @@ function setupFind() {
 
   function findAll() {
     const regexp = new RegExp(escapeRegExp(textbox.value), 'i')
-    const tbody = entries.tBodies.item(0)
-    if (tbody != null) {
-      found.length = 0
-      for (let i = 0; i < tbody.rows.length; i++) {
-        const row = tbody.rows.item(i)
-        for (let j = 0; j < row.cells.length; j++) {
-          const cell = row.cells.item(j)
-          cell.classList.remove('current')
-          const isFound =
-            textbox.value.length > 0 && regexp.test(cell.innerText)
-          if (isFound) {
-            cell.classList.add('found')
-            found.push(cell)
-          } else {
-            cell.classList.remove('found')
-          }
+    found.length = 0
+    for (const row of entries.rows) {
+      for (const cell of row.cells) {
+        cell.classList.remove('current')
+        const isFound = textbox.value.length > 0 && regexp.test(cell.innerText)
+        if (isFound) {
+          cell.classList.add('found')
+          found.push(cell)
+        } else {
+          cell.classList.remove('found')
         }
       }
 

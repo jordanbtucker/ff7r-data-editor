@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- The Find feature works on headers now.
+
 ## [1.0.0-b.7] - 2022-01-11
 
 ### Changed
