@@ -12,6 +12,11 @@ and this project adheres to
 
 - The Find feature works on headers now.
 
+### Fixed
+
+- Boolean values in arrays are read properly now. This fixes an issue with
+  `BattleAICharaSpec` files.
+
 ## [1.0.0-b.7] - 2022-01-11
 
 ### Changed

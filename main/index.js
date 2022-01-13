@@ -181,6 +181,15 @@ async function readUPackage(filename) {
 function writePropertyValue(value, type, file) {
   let number
   switch (type) {
+    case 1:
+    case 7:
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new Error('Value must be a number')
+      }
+
+      file.writeInt32(number)
+      break
     case 2:
     case 3:
       number = Number(value)
@@ -197,14 +206,6 @@ function writePropertyValue(value, type, file) {
       }
 
       file.writeInt16(number)
-      break
-    case 7:
-      number = Number(value)
-      if (isNaN(number)) {
-        throw new Error('Value must be a number')
-      }
-
-      file.writeInt32(number)
       break
     case 9:
       number = Number(value)
@@ -234,6 +235,7 @@ function writePropertyArrayElement(value, index, type, file) {
 
   let number
   switch (type) {
+    case 1:
     case 2:
     case 3:
       number = Number(value)

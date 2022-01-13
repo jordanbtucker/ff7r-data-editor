@@ -85,6 +85,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
           span.dataset.dataType = String(prop.type)
 
           switch (prop.type) {
+            case 1:
             case 2:
             case 3:
             case 4:
@@ -103,6 +104,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
 
                   let number
                   switch (span.dataset.dataType) {
+                    case '1':
                     case '2':
                     case '3':
                       number = Number(span.innerText)
@@ -273,6 +275,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
         td.dataset.dataType = String(prop.type)
 
         switch (prop.type) {
+          case 1:
           case 2:
           case 3:
           case 4:
@@ -291,6 +294,7 @@ ipcRenderer.on('upackage-read', (event, json) => {
 
                 let number
                 switch (td.dataset.dataType) {
+                  case '1':
                   case '2':
                   case '3':
                     number = Number(td.innerText)
@@ -510,6 +514,7 @@ function saveFile() {
         const prop = upackage.uexp.props[j - 2]
         let value
         switch (prop.type) {
+          case 1:
           case 2:
           case 3:
           case 4:
@@ -539,6 +544,7 @@ function saveFile() {
 
             let element
             switch (prop.type) {
+              case 1:
               case 2:
               case 3:
               case 4:
