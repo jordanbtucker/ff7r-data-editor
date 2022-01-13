@@ -3,19 +3,16 @@ const {ipcRenderer} = require('electron')
 const txtRes = require('../lib/text-resource.json')
 const pkg = require('../package.json')
 
+/**
+ * @typedef {{_tag: string} & Record<string, string | number | string[] | number[]>} SparseEntry
+ */
+
 /** @type {import('../lib/upackage').IUPackage} */
 let upackage
 
 window.addEventListener('DOMContentLoaded', () => {
   setTitle()
-
-  document.getElementById('open-file-button').addEventListener('click', () => {
-    ipcRenderer.send('open-file')
-  })
-
-  document
-    .getElementById('save-file-button')
-    .addEventListener('click', saveFile)
+  setupOpenAndSaveButtons()
 
   document
     .getElementById('show-txt-ids-checkbox')
@@ -42,7 +39,28 @@ function setTitle() {
   }
 }
 
-ipcRenderer.on('upackage-read', (event, json) => {
+function setupOpenAndSaveButtons() {
+  document
+    .getElementById('open-file-button')
+    .addEventListener('click', openUPackage)
+
+  document
+    .getElementById('save-file-button')
+    .addEventListener('click', saveUPackage)
+}
+
+function openUPackage() {
+  ipcRenderer.send('open-upackage')
+}
+
+ipcRenderer.on('upackage-opened', (event, json) => {
+  loadUPackage(json)
+})
+
+/**
+ * @param {string} json
+ */
+function loadUPackage(json) {
   upackage = JSON.parse(json)
   const uexp = upackage.uexp
   const table = document.getElementById('entries')
@@ -500,14 +518,15 @@ ipcRenderer.on('upackage-read', (event, json) => {
   setTitle()
 
   document.getElementById('save-file-button').disabled = false
-})
+}
 
-ipcRenderer.on('save-file', saveFile)
+ipcRenderer.on('save-upackage', saveUPackage)
 
-function saveFile() {
+function saveUPackage() {
   // Focus away from entries to ensure they are saved.
   document.getElementById('save-file-button').focus()
 
+  /** @type {SparseEntry[]} */
   const entries = []
   /** @type {HTMLTableElement} */
   const table = document.getElementById('entries')
@@ -581,6 +600,13 @@ function saveFile() {
 }
 
 ipcRenderer.on('upackage-saved', (event, filename) => {
+  upackageSaved(filename)
+})
+
+/**
+ * @param {string} filename
+ */
+function upackageSaved(filename) {
   const toast = document.getElementById('save-file-toast')
   const toastBody = toast.querySelector('.toast-body')
   toastBody.innerText = `${basename(filename)} has been saved.`
@@ -590,7 +616,7 @@ ipcRenderer.on('upackage-saved', (event, filename) => {
   closeButton.addEventListener('click', () => {
     toast.classList.remove('show')
   })
-})
+}
 
 function setupFind() {
   const found = []

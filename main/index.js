@@ -4,6 +4,9 @@ const {default: Conf} = require('conf')
 const pkg = require('../package.json')
 const UPackage = require('../lib/upackage')
 
+const UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID = 'upackageOpenDialogDefaultPath'
+const UPACKAGE_SAVE_DIALOG_DEFAULT_PATH_ID = 'upackageSaveDialogDefaultPath'
+
 const conf = new Conf()
 
 const isMac = process.platform === 'darwin'
@@ -43,13 +46,13 @@ function createMainWindow() {
     {
       label: 'File',
       submenu: [
-        {label: 'Open...', accelerator: 'Control+O', click: handleOpenFile},
+        {label: 'Open...', accelerator: 'Control+O', click: openUPackage},
         {
           label: 'Save...',
           id: 'save',
           enabled: false,
           accelerator: 'Control+S',
-          click: handleSaveFile,
+          click: saveUPackage,
         },
         {type: 'separator'},
         {role: 'quit'},
@@ -105,11 +108,11 @@ app.on('window-all-closed', () => {
 /** @type {UPackage} */
 let upackage
 
-ipcMain.on('open-file', handleOpenFile)
+ipcMain.on('open-upackage', openUPackage)
 
-async function handleOpenFile() {
+async function openUPackage() {
   const {canceled, filePaths} = await dialog.showOpenDialog({
-    defaultPath: conf.get('upackageOpenFileDialogDefaultPath'),
+    defaultPath: conf.get(UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID),
     filters: [
       {name: 'UAsset files', extensions: ['uasset']},
       {name: 'All files', extensions: ['*']},
@@ -118,18 +121,30 @@ async function handleOpenFile() {
 
   if (!canceled) {
     try {
-      upackage = await readUPackage(filePaths[0])
-      mainWindow.webContents.send('upackage-read', JSON.stringify(upackage))
+      upackage = new UPackage(filePaths[0])
+      await upackage.read()
+      mainWindow.webContents.send('upackage-opened', JSON.stringify(upackage))
       const menu = Menu.getApplicationMenu()
       menu.getMenuItemById('save').enabled = true
-      conf.set('upackageOpenFileDialogDefaultPath', dirname(filePaths[0]))
+      conf.set(UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID, dirname(filePaths[0]))
     } catch (err) {
       dialog.showMessageBoxSync({message: err.stack})
     }
   }
 }
 
+function saveUPackage() {
+  mainWindow.webContents.send('save-upackage')
+}
+
 ipcMain.on('upackage-saved', async (event, entries) => {
+  upackageSaved(entries)
+})
+
+/**
+ * @param {import('../renderer/preload').SparseEntry[]} entries
+ */
+async function upackageSaved(entries) {
   try {
     const {uexp} = upackage
 
@@ -154,35 +169,24 @@ ipcMain.on('upackage-saved', async (event, entries) => {
     }
 
     const {canceled, filePath} = await dialog.showSaveDialog({
-      defaultPath: uexp.filename,
+      defaultPath:
+        conf.get(UPACKAGE_SAVE_DIALOG_DEFAULT_PATH_ID) || uexp.filename,
       filters: [{name: 'UExport files', extensions: ['uexp']}],
     })
 
     if (!canceled) {
       uexp.filename = filePath
       await uexp.write()
-      event.reply('upackage-saved', upackage.uexpFilename)
+      conf.set(UPACKAGE_SAVE_DIALOG_DEFAULT_PATH_ID, dirname(filePath))
+      mainWindow.send('upackage-saved', upackage.uexpFilename)
     }
   } catch (err) {
     dialog.showMessageBoxSync({message: err.stack})
   }
-})
-
-function handleSaveFile() {
-  mainWindow.webContents.send('save-file')
 }
 
 function handleFind() {
   mainWindow.webContents.send('find')
-}
-
-/**
- * @param {string} filename
- */
-async function readUPackage(filename) {
-  const upackage = new UPackage(filename)
-  await upackage.read()
-  return upackage
 }
 
 /**
