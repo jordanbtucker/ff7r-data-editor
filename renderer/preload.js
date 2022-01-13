@@ -7,7 +7,7 @@ const pkg = require('../package.json')
 let upackage
 
 window.addEventListener('DOMContentLoaded', () => {
-  document.title = `${pkg.description} v${pkg.version}`
+  setTitle()
 
   document.getElementById('open-file-button').addEventListener('click', () => {
     ipcRenderer.send('open-file')
@@ -32,6 +32,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
   setupFind()
 })
+
+function setTitle() {
+  const nameAndVersion = `${pkg.description} v${pkg.version}`
+  if (upackage != null) {
+    document.title = `${basename(upackage.uasset.filename)} - ${nameAndVersion}`
+  } else {
+    document.title = nameAndVersion
+  }
+}
 
 ipcRenderer.on('upackage-read', (event, json) => {
   upackage = JSON.parse(json)
@@ -488,9 +497,8 @@ ipcRenderer.on('upackage-read', (event, json) => {
 
   table.replaceChildren(thead, tbody)
 
-  document.title = `${basename(upackage.uasset.filename)} - ${
-    pkg.description
-  } v${pkg.version}`
+  setTitle()
+
   document.getElementById('save-file-button').disabled = false
 })
 
