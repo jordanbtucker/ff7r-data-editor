@@ -12,6 +12,7 @@
     "build": "electron-packager . --out dist --overwrite",
     "eslint": "eslint --fix .",
     "lint": "run-s eslint prettier",
+    "prebuild": "npm install",
     "prepare": "husky install",
     "prettier": "prettier --loglevel warn -w .",
     "preversion": "npm run lint",
