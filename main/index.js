@@ -47,7 +47,11 @@ function createMainWindow() {
     {
       label: 'File',
       submenu: [
-        {label: 'Open...', accelerator: 'Control+O', click: openUPackage},
+        {
+          label: 'Open...',
+          accelerator: 'Control+O',
+          click: openUPackage,
+        },
         {
           label: 'Save...',
           id: 'save',
@@ -72,7 +76,11 @@ function createMainWindow() {
         {type: 'separator'},
         {role: 'selectAll'},
         {type: 'separator'},
-        {label: 'Find...', accelerator: 'Control+F', click: handleFind},
+        {
+          label: 'Find...',
+          accelerator: 'Control+F',
+          click: find,
+        },
       ],
     },
     {role: 'viewMenu'},
@@ -186,7 +194,7 @@ async function upackageSaved(entries) {
   }
 }
 
-function handleFind() {
+function find() {
   mainWindow.webContents.send('find')
 }
 
