@@ -4,7 +4,7 @@ Modify `*.uasset` and `*.uexp` files for Final Fantasy VII Remake.
 
 ## Limitations
 
-- Only tested with files in `End\Content\GameContents\DataObject\Resident`.
+- Only tested with files in `End\Content\GameContents\DataObject`.
 - Only makes changes to `*.uexp` files.
 - Only makes changes that do not require changing file size.
   - Numeric values and FNames.
