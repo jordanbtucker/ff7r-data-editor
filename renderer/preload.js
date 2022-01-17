@@ -138,59 +138,7 @@ function loadEntries(entries) {
               })
 
               span.addEventListener('blur', () => {
-                if (span.innerText !== originalElement) {
-                  span.dataset.isDirty = ''
-
-                  let number
-                  switch (Number(span.dataset.dataType)) {
-                    case PropertyType.BOOLEAN:
-                    case PropertyType.BYTE:
-                    case PropertyType.BOOLEAN_BYTE:
-                      number = Number(span.innerText)
-                      if (isNaN(number)) {
-                        span.classList.add('invalid')
-                        span.title = 'Value must be a number'
-                      } else if (number < 0x0 || number > 0x0ff) {
-                        span.classList.add('invalid')
-                        span.title = 'Value must be between 0 and 255'
-                      } else {
-                        span.classList.remove('invalid')
-                        span.removeAttribute('title')
-                      }
-                      break
-                    case PropertyType.UINT16:
-                      number = Number(span.innerText)
-                      if (isNaN(number)) {
-                        span.classList.add('invalid')
-                        span.title = 'Value must be a number'
-                      } else if (number < -32768 || number > 32767) {
-                        span.classList.add('invalid')
-                        span.title = 'Value must be between -32,768 and 32,768'
-                      } else {
-                        span.classList.remove('invalid')
-                        span.removeAttribute('title')
-                      }
-                      break
-                    case PropertyType.INT32:
-                      number = Number(span.innerText)
-                      if (isNaN(number)) {
-                        span.classList.add('invalid')
-                        span.title = 'Value must be a number'
-                      } else if (number < -2147483648 || number > 2147483647) {
-                        span.classList.add('invalid')
-                        span.title =
-                          'Value must be between -2,147,483,648 and 2,147,483,647'
-                      } else {
-                        span.classList.remove('invalid')
-                        span.removeAttribute('title')
-                      }
-                      break
-                  }
-                } else {
-                  delete span.dataset.isDirty
-                  span.classList.remove('invalid')
-                  span.removeAttribute('title')
-                }
+                validateProperty(span, originalElement)
               })
               break
 
@@ -328,59 +276,7 @@ function loadEntries(entries) {
             })
 
             td.addEventListener('blur', () => {
-              if (td.innerText !== originalValue) {
-                td.dataset.isDirty = ''
-
-                let number
-                switch (Number(td.dataset.dataType)) {
-                  case PropertyType.BOOLEAN:
-                  case PropertyType.BYTE:
-                  case PropertyType.BOOLEAN_BYTE:
-                    number = Number(td.innerText)
-                    if (isNaN(number)) {
-                      td.classList.add('invalid')
-                      td.title = 'Value must be a number'
-                    } else if (number < 0x0 || number > 0x0ff) {
-                      td.classList.add('invalid')
-                      td.title = 'Value must be between 0 and 255'
-                    } else {
-                      td.classList.remove('invalid')
-                      td.removeAttribute('title')
-                    }
-                    break
-                  case PropertyType.UINT16:
-                    number = Number(td.innerText)
-                    if (isNaN(number)) {
-                      td.classList.add('invalid')
-                      td.title = 'Value must be a number'
-                    } else if (number < -32768 || number > 32767) {
-                      td.classList.add('invalid')
-                      td.title = 'Value must be between -32,768 and 32,768'
-                    } else {
-                      td.classList.remove('invalid')
-                      td.removeAttribute('title')
-                    }
-                    break
-                  case PropertyType.INT32:
-                    number = Number(td.innerText)
-                    if (isNaN(number)) {
-                      td.classList.add('invalid')
-                      td.title = 'Value must be a number'
-                    } else if (number < -2147483648 || number > 2147483647) {
-                      td.classList.add('invalid')
-                      td.title =
-                        'Value must be between -2,147,483,648 and 2,147,483,647'
-                    } else {
-                      td.classList.remove('invalid')
-                      td.removeAttribute('title')
-                    }
-                    break
-                }
-              } else {
-                delete td.dataset.isDirty
-                td.classList.remove('invalid')
-                td.removeAttribute('title')
-              }
+              validateProperty(td, originalValue)
             })
             break
 
@@ -526,6 +422,72 @@ function loadEntries(entries) {
   }
 
   table.replaceChildren(thead, tbody)
+}
+
+/**
+ * @param {number} type
+ */
+function getPropertyRange(type) {
+  let min
+  let max
+  switch (type) {
+    case PropertyType.BOOLEAN:
+    case PropertyType.BYTE:
+    case PropertyType.BOOLEAN_BYTE:
+      min = 0
+      max = 0xff
+      break
+    case PropertyType.UINT16:
+      min = 0
+      max = 0xffff
+      break
+    case PropertyType.INT32:
+      min = -(2 ** 31)
+      max = 2 ** 31 - 1
+      break
+    case PropertyType.FLOAT:
+      min = Number.MIN_VALUE
+      max = Number.MAX_VALUE
+      break
+    default:
+      return undefined
+  }
+
+  return {min, max}
+}
+
+function validateProperty(element, originalValue) {
+  if (element.innerText !== originalValue) {
+    element.dataset.isDirty = ''
+
+    let number
+    const type = Number(element.dataset.dataType)
+    const {min, max} = getPropertyRange(type)
+    switch (type) {
+      case PropertyType.BOOLEAN:
+      case PropertyType.BYTE:
+      case PropertyType.BOOLEAN_BYTE:
+      case PropertyType.UINT16:
+      case PropertyType.INT32:
+      case PropertyType.FLOAT:
+        number = Number(element.innerText)
+        if (isNaN(number)) {
+          element.classList.add('invalid')
+          element.title = 'Value must be a number'
+        } else if (number < min || number > max) {
+          element.classList.add('invalid')
+          element.title = `Value must be between ${min.toLocaleString()} and ${max.toLocaleString()}`
+        } else {
+          element.classList.remove('invalid')
+          element.removeAttribute('title')
+        }
+        break
+    }
+  } else {
+    delete element.dataset.isDirty
+    element.classList.remove('invalid')
+    element.removeAttribute('title')
+  }
 }
 
 /**
