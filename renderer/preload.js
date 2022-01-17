@@ -521,12 +521,7 @@ function loadUPackage(json) {
   document.getElementById('save-file-button').disabled = false
 }
 
-ipcRenderer.on('save-upackage', saveUPackage)
-
-function saveUPackage() {
-  // Focus away from entries to ensure they are saved.
-  document.getElementById('save-file-button').focus()
-
+function getEntries() {
   /** @type {SparseEntry[]} */
   const entries = []
   /** @type {HTMLTableElement} */
@@ -535,7 +530,7 @@ function saveUPackage() {
   for (let i = 0; i < tbody.rows.length; i++) {
     const tr = tbody.rows.item(i)
     const tagTD = tr.cells.item(1)
-    const entry = {_td: tagTD.innerText}
+    const entry = {_tag: tagTD.innerText}
     for (let j = 2; j < tr.cells.length; j++) {
       const td = tr.cells.item(j)
       if (td.dataset.isDirty != null) {
@@ -597,6 +592,15 @@ function saveUPackage() {
     entries.push(entry)
   }
 
+  return entries
+}
+
+ipcRenderer.on('save-upackage', saveUPackage)
+
+function saveUPackage() {
+  // Focus away from entries to ensure they are saved.
+  document.getElementById('save-file-button').focus()
+  const entries = getEntries()
   ipcRenderer.send('upackage-saved', entries)
 }
 
