@@ -1,12 +1,15 @@
+const {writeFile} = require('fs/promises')
 const {dirname, join} = require('path')
 const {app, BrowserWindow, dialog, ipcMain, Menu, shell} = require('electron')
 const {default: Conf} = require('conf')
+const Papa = require('papaparse')
 const pkg = require('../package.json')
 const UPackage = require('../lib/upackage')
 const {PropertyType} = require('../lib/uexport')
 
 const UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID = 'upackageOpenDialogDefaultPath'
 const UPACKAGE_SAVE_DIALOG_DEFAULT_PATH_ID = 'upackageSaveDialogDefaultPath'
+const CSV_SAVE_DIALOG_DEFAULT_PATH_ID = 'csvSaveFileDialogDefaultPath'
 
 const conf = new Conf()
 
@@ -58,6 +61,14 @@ function createMainWindow() {
           enabled: false,
           accelerator: 'Control+S',
           click: saveUPackage,
+        },
+        {type: 'separator'},
+        {
+          label: 'Export...',
+          id: 'export',
+          enabled: false,
+          accelerator: 'Control+E',
+          click: exportCSV,
         },
         {type: 'separator'},
         {role: 'quit'},
@@ -135,6 +146,7 @@ async function openUPackage() {
       mainWindow.webContents.send('upackage-opened', JSON.stringify(upackage))
       const menu = Menu.getApplicationMenu()
       menu.getMenuItemById('save').enabled = true
+      menu.getMenuItemById('export').enabled = true
       conf.set(UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID, dirname(filePaths[0]))
     } catch (err) {
       dialog.showMessageBoxSync({message: err.stack})
@@ -196,6 +208,90 @@ async function upackageSaved(entries) {
 
 function find() {
   mainWindow.webContents.send('find')
+}
+
+async function exportCSV() {
+  mainWindow.webContents.send('export-csv')
+}
+
+ipcMain.on('csv-exported', (event, entries) => {
+  csvExported(entries)
+})
+
+/**
+ * @param {import('../renderer/preload').SparseEntry[]} entries
+ */
+async function csvExported(entries) {
+  try {
+    const {uexp} = upackage
+    const {props} = uexp
+    const fields = ['Tag']
+    const data = []
+    const columnSizes = {Tag: 1}
+
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i]
+      const line = {Tag: entry.$tag}
+      for (const prop of props) {
+        const value = entry[prop.name]
+        if (prop.name.endsWith('_Array')) {
+          for (let j = 0; j < value.length; j++) {
+            const field = `${prop.name}[${j}]`
+            const element = value[j]
+
+            if (typeof element === 'number') {
+              line[field] = `="${element}"`
+            } else {
+              line[field] = element
+            }
+          }
+
+          if (
+            columnSizes[prop.name] == null ||
+            columnSizes[prop.name] < value.length
+          ) {
+            columnSizes[prop.name] = value.length
+          }
+        } else {
+          if (typeof value === 'number') {
+            line[prop.name] = `="${value}"`
+          } else {
+            line[prop.name] = value
+          }
+        }
+      }
+
+      data.push(line)
+    }
+
+    for (const prop of props) {
+      if (prop.name.endsWith('_Array')) {
+        for (let i = 0; i < columnSizes[prop.name]; i++) {
+          fields.push(`${prop.name}[${i}]`)
+        }
+      } else {
+        fields.push(prop.name)
+      }
+    }
+
+    const csv = Papa.unparse({fields, data})
+    const {canceled, filePath} = await dialog.showSaveDialog({
+      defaultPath:
+        conf.get(CSV_SAVE_DIALOG_DEFAULT_PATH_ID) ||
+        uexp.filename.replace(/\.uexp$/, '.csv'),
+      filters: [
+        {name: 'CSV files', extensions: ['csv']},
+        {name: 'All files', extensions: ['*']},
+      ],
+    })
+
+    if (!canceled) {
+      await writeFile(filePath, csv)
+      conf.set(CSV_SAVE_DIALOG_DEFAULT_PATH_ID, filePath)
+    }
+  } catch (err) {
+    dialog.showMessageBoxSync({message: err.stack})
+  }
 }
 
 /**

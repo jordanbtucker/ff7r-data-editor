@@ -521,7 +521,15 @@ function loadUPackage(json) {
   document.getElementById('save-file-button').disabled = false
 }
 
-function getEntries() {
+/**
+ * @typedef GetEntriesOptions
+ * @property {boolean} dirtyOnly
+ */
+
+/**
+ * @param {GetEntriesOptions} options
+ */
+function getEntries({dirtyOnly} = {dirtyOnly: true}) {
   /** @type {SparseEntry[]} */
   const entries = []
   /** @type {HTMLTableElement} */
@@ -533,9 +541,13 @@ function getEntries() {
     const entry = {$tag: tagTD.innerText}
     for (let j = 2; j < tr.cells.length; j++) {
       const td = tr.cells.item(j)
-      if (td.dataset.isDirty != null) {
-        const prop = upackage.uexp.props[j - 2]
+      const prop = upackage.uexp.props[j - 2]
+      if (
+        !prop.name.endsWith('_Array') &&
+        (!dirtyOnly || td.dataset.isDirty != null)
+      ) {
         let value
+        let txtID
         switch (prop.type) {
           case PropertyType.BOOLEAN:
           case PropertyType.BYTE:
@@ -544,6 +556,14 @@ function getEntries() {
           case PropertyType.INT32:
           case PropertyType.FLOAT:
             value = Number(td.innerText)
+            break
+          case PropertyType.STRING:
+            txtID = td.querySelector('.txt-id')
+            if (txtID != null) {
+              value = txtID.innerText
+            } else {
+              value = td.innerText
+            }
             break
           case PropertyType.NAME:
             value = td.dataset.value
@@ -555,17 +575,16 @@ function getEntries() {
         entry[prop.name] = value
       } else {
         const spans = td.querySelectorAll('.element')
-        let array
+        let array = dirtyOnly ? undefined : []
         for (let k = 0; k < spans.length; k++) {
           const span = spans.item(k)
-          if (span.dataset.isDirty != null) {
-            const prop = upackage.uexp.props[j - 2]
-
+          if (!dirtyOnly || span.dataset.isDirty != null) {
             if (array == null) {
               array = Array(upackage.uexp.entries[i][prop.name].length)
             }
 
             let element
+            let txtID
             switch (prop.type) {
               case PropertyType.BOOLEAN:
               case PropertyType.BYTE:
@@ -575,6 +594,14 @@ function getEntries() {
               case PropertyType.FLOAT:
                 element = Number(span.innerText)
                 break
+              case PropertyType.STRING:
+                txtID = td.querySelector('.txt-id')
+                if (txtID != null) {
+                  element = txtID.innerText
+                } else {
+                  element = td.innerText
+                }
+                break
               case PropertyType.NAME:
                 element = span.dataset.value
                 break
@@ -583,9 +610,10 @@ function getEntries() {
             }
 
             array[k] = element
-            entry[prop.name] = array
           }
         }
+
+        entry[prop.name] = array
       }
     }
 
@@ -602,6 +630,15 @@ function saveUPackage() {
   document.getElementById('save-file-button').focus()
   const entries = getEntries()
   ipcRenderer.send('upackage-saved', entries)
+}
+
+ipcRenderer.on('export-csv', exportCSV)
+
+function exportCSV() {
+  // Focus away from entries to ensure they are saved.
+  document.getElementById('save-file-button').focus()
+  const entries = getEntries({dirtyOnly: false})
+  ipcRenderer.send('csv-exported', entries)
 }
 
 ipcRenderer.on('upackage-saved', (event, filename) => {

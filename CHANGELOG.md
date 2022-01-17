@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Data can now be exported to CSV files.
+
 ### Changed
 
 - The Find feature works on headers now.
