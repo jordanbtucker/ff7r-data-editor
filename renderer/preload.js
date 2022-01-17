@@ -121,137 +121,7 @@ function loadEntries(entries) {
           const originalElement = String(originalEntry[prop.name][j])
           const span = document.createElement('span')
           span.classList.add('element')
-
-          switch (prop.type) {
-            case PropertyType.BOOLEAN:
-            case PropertyType.BYTE:
-            case PropertyType.BOOLEAN_BYTE:
-            case PropertyType.UINT16:
-            case PropertyType.INT32:
-            case PropertyType.FLOAT:
-              span.innerText = String(element)
-              span.contentEditable = 'true'
-              validateProperty(prop.type, span, originalElement)
-
-              span.addEventListener('focus', () => {
-                getSelection().selectAllChildren(span)
-              })
-
-              span.addEventListener('blur', () => {
-                validateProperty(prop.type, span, originalElement)
-              })
-              break
-
-            case PropertyType.STRING:
-              if (txtRes[element] != null) {
-                const txtID = document.createElement('span')
-                txtID.classList.add('txt-id')
-                txtID.innerText = element
-                txtID.title = txtRes[element]
-                span.appendChild(txtID)
-
-                const txtValue = document.createElement('span')
-                txtValue.classList.add('txt-value')
-                txtValue.innerText = txtRes[element]
-                txtValue.title = element
-                span.appendChild(txtValue)
-              } else {
-                span.innerText = element
-              }
-
-              td.classList.add('disabled')
-              break
-
-            case PropertyType.NAME:
-              if (txtRes[element] != null) {
-                const txtID = document.createElement('span')
-                txtID.classList.add('txt-id')
-                txtID.innerText = element
-                txtID.title = txtRes[element]
-                span.appendChild(txtID)
-
-                const txtValue = document.createElement('span')
-                txtValue.classList.add('txt-value')
-                txtValue.innerText = txtRes[element]
-                txtValue.title = element
-                span.appendChild(txtValue)
-              } else {
-                span.innerText = element
-              }
-
-              span.dataset.value = element
-              span.tabIndex = 0
-
-              span.addEventListener('focus', () => {
-                const showTxtValues = document
-                  .getElementById('entries')
-                  .classList.contains('txt-values')
-
-                const select = document.createElement('select')
-
-                for (const name of upackage.uasset.names) {
-                  const option = document.createElement('option')
-                  option.value = name
-
-                  if (txtRes[name] != null) {
-                    if (showTxtValues) {
-                      option.label = txtRes[name]
-                      option.title = name
-                    } else {
-                      option.label = name
-                      option.title = txtRes[name]
-                    }
-                  } else {
-                    option.label = name
-                  }
-
-                  select.appendChild(option)
-                }
-
-                select.value = span.dataset.value
-
-                select.addEventListener('blur', () => {
-                  const selectedValue = select.value
-
-                  if (selectedValue !== originalElement) {
-                    span.dataset.isDirty = ''
-                  } else {
-                    delete span.dataset.isDirty
-                  }
-
-                  if (txtRes[selectedValue] != null) {
-                    span.replaceChildren()
-
-                    const txtID = document.createElement('span')
-                    txtID.classList.add('txt-id')
-                    txtID.innerText = selectedValue
-                    txtID.title = txtRes[selectedValue]
-                    span.appendChild(txtID)
-
-                    const txtValue = document.createElement('span')
-                    txtValue.classList.add('txt-value')
-                    txtValue.innerText = txtRes[selectedValue]
-                    txtValue.title = selectedValue
-                    span.appendChild(txtValue)
-                  } else {
-                    span.innerText = selectedValue
-                  }
-
-                  span.dataset.value = selectedValue
-                  span.tabIndex = 0
-                })
-
-                span.replaceChildren(select)
-                span.tabIndex = -1
-                select.focus()
-              })
-              break
-
-            default:
-              span.innerText = String(value)
-              td.classList.add('disabled')
-          }
-
+          loadProperty(prop, element, originalElement, span, td)
           td.appendChild(span)
 
           if (j !== value.length - 1) {
@@ -259,135 +129,7 @@ function loadEntries(entries) {
           }
         }
       } else {
-        switch (prop.type) {
-          case PropertyType.BOOLEAN:
-          case PropertyType.BYTE:
-          case PropertyType.BOOLEAN_BYTE:
-          case PropertyType.UINT16:
-          case PropertyType.INT32:
-          case PropertyType.FLOAT:
-            td.innerText = String(value)
-            td.contentEditable = 'true'
-            validateProperty(prop.type, td, originalValue)
-
-            td.addEventListener('focus', () => {
-              getSelection().selectAllChildren(td)
-            })
-
-            td.addEventListener('blur', () => {
-              validateProperty(prop.type, td, originalValue)
-            })
-            break
-
-          case PropertyType.STRING:
-            if (txtRes[value] != null) {
-              const txtID = document.createElement('span')
-              txtID.classList.add('txt-id')
-              txtID.innerText = value
-              txtID.title = txtRes[value]
-              td.appendChild(txtID)
-
-              const txtValue = document.createElement('span')
-              txtValue.classList.add('txt-value')
-              txtValue.innerText = txtRes[value]
-              txtValue.title = value
-              td.appendChild(txtValue)
-            } else {
-              td.innerText = value
-            }
-
-            td.classList.add('disabled')
-            break
-
-          case PropertyType.NAME:
-            if (txtRes[value] != null) {
-              const txtID = document.createElement('span')
-              txtID.classList.add('txt-id')
-              txtID.innerText = value
-              txtID.title = txtRes[value]
-              td.appendChild(txtID)
-
-              const txtValue = document.createElement('span')
-              txtValue.classList.add('txt-value')
-              txtValue.innerText = txtRes[value]
-              txtValue.title = value
-              td.appendChild(txtValue)
-            } else {
-              td.innerText = value
-            }
-
-            td.dataset.value = value
-            td.tabIndex = 0
-
-            td.addEventListener('focus', () => {
-              const showTxtValues = document
-                .getElementById('entries')
-                .classList.contains('txt-values')
-
-              const select = document.createElement('select')
-
-              for (const name of upackage.uasset.names) {
-                const option = document.createElement('option')
-                option.value = name
-
-                if (txtRes[name] != null) {
-                  if (showTxtValues) {
-                    option.label = txtRes[name]
-                    option.title = name
-                  } else {
-                    option.label = name
-                    option.title = txtRes[name]
-                  }
-                } else {
-                  option.label = name
-                }
-
-                select.appendChild(option)
-              }
-
-              select.value = td.dataset.value
-
-              select.addEventListener('blur', () => {
-                const selectedValue = select.value
-
-                if (selectedValue !== originalValue) {
-                  td.dataset.isDirty = ''
-                } else {
-                  delete td.dataset.isDirty
-                }
-
-                if (txtRes[selectedValue] != null) {
-                  td.replaceChildren()
-
-                  const txtID = document.createElement('span')
-                  txtID.classList.add('txt-id')
-                  txtID.innerText = selectedValue
-                  txtID.title = txtRes[selectedValue]
-                  td.appendChild(txtID)
-
-                  const txtValue = document.createElement('span')
-                  txtValue.classList.add('txt-value')
-                  txtValue.innerText = txtRes[selectedValue]
-                  txtValue.title = selectedValue
-                  td.appendChild(txtValue)
-                } else {
-                  td.innerText = selectedValue
-                }
-
-                td.dataset.value = selectedValue
-                td.tabIndex = 0
-              })
-
-              td.replaceChildren(select)
-              td.tabIndex = -1
-              select.focus()
-            })
-            break
-
-          default:
-            td.innerText = String(value)
-            td.classList.add('disabled')
-        }
+        loadProperty(prop, value, originalValue, td)
       }
 
       td.addEventListener('keydown', event => {
@@ -421,6 +163,150 @@ function loadEntries(entries) {
   }
 
   table.replaceChildren(thead, tbody)
+}
+
+/**
+ *
+ * @param {import('../lib/uexport').Property} prop
+ * @param {number | string} value
+ * @param {string} originalValue
+ * @param {HTMLElement} element
+ * @param {HTMLElement} [parent]
+ */
+function loadProperty(prop, value, originalValue, element, parent) {
+  if (parent == null) {
+    parent = element
+  }
+
+  switch (prop.type) {
+    case PropertyType.BOOLEAN:
+    case PropertyType.BYTE:
+    case PropertyType.BOOLEAN_BYTE:
+    case PropertyType.UINT16:
+    case PropertyType.INT32:
+    case PropertyType.FLOAT:
+      element.innerText = String(value)
+      element.contentEditable = 'true'
+      validateProperty(prop.type, element, originalValue)
+
+      element.addEventListener('focus', () => {
+        getSelection().selectAllChildren(element)
+      })
+
+      element.addEventListener('blur', () => {
+        validateProperty(prop.type, element, originalValue)
+      })
+      break
+
+    case PropertyType.STRING:
+      if (txtRes[value] != null) {
+        const txtID = document.createElement('span')
+        txtID.classList.add('txt-id')
+        txtID.innerText = value
+        txtID.title = txtRes[value]
+        element.appendChild(txtID)
+
+        const txtValue = document.createElement('span')
+        txtValue.classList.add('txt-value')
+        txtValue.innerText = txtRes[value]
+        txtValue.title = value
+        element.appendChild(txtValue)
+      } else {
+        element.innerText = value
+      }
+
+      parent.classList.add('disabled')
+      break
+
+    case PropertyType.NAME:
+      if (txtRes[value] != null) {
+        const txtID = document.createElement('span')
+        txtID.classList.add('txt-id')
+        txtID.innerText = value
+        txtID.title = txtRes[value]
+        element.appendChild(txtID)
+
+        const txtValue = document.createElement('span')
+        txtValue.classList.add('txt-value')
+        txtValue.innerText = txtRes[value]
+        txtValue.title = value
+        element.appendChild(txtValue)
+      } else {
+        element.innerText = value
+      }
+
+      element.dataset.value = value
+      element.tabIndex = 0
+
+      element.addEventListener('focus', () => {
+        const showTxtValues = document
+          .getElementById('entries')
+          .classList.contains('txt-values')
+
+        const select = document.createElement('select')
+
+        for (const name of upackage.uasset.names) {
+          const option = document.createElement('option')
+          option.value = name
+
+          if (txtRes[name] != null) {
+            if (showTxtValues) {
+              option.label = txtRes[name]
+              option.title = name
+            } else {
+              option.label = name
+              option.title = txtRes[name]
+            }
+          } else {
+            option.label = name
+          }
+
+          select.appendChild(option)
+        }
+
+        select.value = element.dataset.value
+
+        select.addEventListener('blur', () => {
+          const selectedValue = select.value
+
+          if (selectedValue !== originalValue) {
+            element.dataset.isDirty = ''
+          } else {
+            delete element.dataset.isDirty
+          }
+
+          if (txtRes[selectedValue] != null) {
+            element.replaceChildren()
+
+            const txtID = document.createElement('span')
+            txtID.classList.add('txt-id')
+            txtID.innerText = selectedValue
+            txtID.title = txtRes[selectedValue]
+            element.appendChild(txtID)
+
+            const txtValue = document.createElement('span')
+            txtValue.classList.add('txt-value')
+            txtValue.innerText = txtRes[selectedValue]
+            txtValue.title = selectedValue
+            element.appendChild(txtValue)
+          } else {
+            element.innerText = selectedValue
+          }
+
+          element.dataset.value = selectedValue
+          element.tabIndex = 0
+        })
+
+        element.replaceChildren(select)
+        element.tabIndex = -1
+        select.focus()
+      })
+      break
+
+    default:
+      element.innerText = String(value)
+      parent.classList.add('disabled')
+  }
 }
 
 /**
