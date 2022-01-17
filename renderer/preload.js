@@ -1,5 +1,6 @@
 const {basename} = require('path')
 const {ipcRenderer} = require('electron')
+const {PropertyType} = require('../lib/uexport')
 const txtRes = require('../lib/text-resource.json')
 const pkg = require('../package.json')
 
@@ -112,12 +113,12 @@ function loadUPackage(json) {
           span.dataset.dataType = String(prop.type)
 
           switch (prop.type) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 7:
-            case 9:
+            case PropertyType.BOOLEAN:
+            case PropertyType.BYTE:
+            case PropertyType.BOOLEAN_BYTE:
+            case PropertyType.UINT16:
+            case PropertyType.INT32:
+            case PropertyType.FLOAT:
               span.innerText = String(element)
               span.contentEditable = 'true'
 
@@ -130,10 +131,10 @@ function loadUPackage(json) {
                   span.dataset.isDirty = ''
 
                   let number
-                  switch (span.dataset.dataType) {
-                    case '1':
-                    case '2':
-                    case '3':
+                  switch (Number(span.dataset.dataType)) {
+                    case PropertyType.BOOLEAN:
+                    case PropertyType.BYTE:
+                    case PropertyType.BOOLEAN_BYTE:
                       number = Number(span.innerText)
                       if (isNaN(number)) {
                         span.classList.add('invalid')
@@ -146,7 +147,7 @@ function loadUPackage(json) {
                         span.removeAttribute('title')
                       }
                       break
-                    case '4':
+                    case PropertyType.UINT16:
                       number = Number(span.innerText)
                       if (isNaN(number)) {
                         span.classList.add('invalid')
@@ -159,7 +160,7 @@ function loadUPackage(json) {
                         span.removeAttribute('title')
                       }
                       break
-                    case '7':
+                    case PropertyType.INT32:
                       number = Number(span.innerText)
                       if (isNaN(number)) {
                         span.classList.add('invalid')
@@ -182,7 +183,7 @@ function loadUPackage(json) {
               })
               break
 
-            case 10:
+            case PropertyType.STRING:
               if (txtRes[element] != null) {
                 const txtID = document.createElement('span')
                 txtID.classList.add('txt-id')
@@ -202,7 +203,7 @@ function loadUPackage(json) {
               td.classList.add('disabled')
               break
 
-            case 11:
+            case PropertyType.NAME:
               if (txtRes[element] != null) {
                 const txtID = document.createElement('span')
                 txtID.classList.add('txt-id')
@@ -302,12 +303,12 @@ function loadUPackage(json) {
         td.dataset.dataType = String(prop.type)
 
         switch (prop.type) {
-          case 1:
-          case 2:
-          case 3:
-          case 4:
-          case 7:
-          case 9:
+          case PropertyType.BOOLEAN:
+          case PropertyType.BYTE:
+          case PropertyType.BOOLEAN_BYTE:
+          case PropertyType.UINT16:
+          case PropertyType.INT32:
+          case PropertyType.FLOAT:
             td.innerText = String(value)
             td.contentEditable = 'true'
 
@@ -320,10 +321,10 @@ function loadUPackage(json) {
                 td.dataset.isDirty = ''
 
                 let number
-                switch (td.dataset.dataType) {
-                  case '1':
-                  case '2':
-                  case '3':
+                switch (Number(td.dataset.dataType)) {
+                  case PropertyType.BOOLEAN:
+                  case PropertyType.BYTE:
+                  case PropertyType.BOOLEAN_BYTE:
                     number = Number(td.innerText)
                     if (isNaN(number)) {
                       td.classList.add('invalid')
@@ -336,7 +337,7 @@ function loadUPackage(json) {
                       td.removeAttribute('title')
                     }
                     break
-                  case '4':
+                  case PropertyType.UINT16:
                     number = Number(td.innerText)
                     if (isNaN(number)) {
                       td.classList.add('invalid')
@@ -349,7 +350,7 @@ function loadUPackage(json) {
                       td.removeAttribute('title')
                     }
                     break
-                  case '7':
+                  case PropertyType.INT32:
                     number = Number(td.innerText)
                     if (isNaN(number)) {
                       td.classList.add('invalid')
@@ -372,7 +373,7 @@ function loadUPackage(json) {
             })
             break
 
-          case 10:
+          case PropertyType.STRING:
             if (txtRes[value] != null) {
               const txtID = document.createElement('span')
               txtID.classList.add('txt-id')
@@ -392,7 +393,7 @@ function loadUPackage(json) {
             td.classList.add('disabled')
             break
 
-          case 11:
+          case PropertyType.NAME:
             if (txtRes[value] != null) {
               const txtID = document.createElement('span')
               txtID.classList.add('txt-id')
@@ -541,15 +542,15 @@ function saveUPackage() {
         const prop = upackage.uexp.props[j - 2]
         let value
         switch (prop.type) {
-          case 1:
-          case 2:
-          case 3:
-          case 4:
-          case 7:
-          case 9:
+          case PropertyType.BOOLEAN:
+          case PropertyType.BYTE:
+          case PropertyType.BOOLEAN_BYTE:
+          case PropertyType.UINT16:
+          case PropertyType.INT32:
+          case PropertyType.FLOAT:
             value = Number(td.innerText)
             break
-          case 11:
+          case PropertyType.NAME:
             value = td.dataset.value
             break
           default:
@@ -571,15 +572,15 @@ function saveUPackage() {
 
             let element
             switch (prop.type) {
-              case 1:
-              case 2:
-              case 3:
-              case 4:
-              case 7:
-              case 9:
+              case PropertyType.BOOLEAN:
+              case PropertyType.BYTE:
+              case PropertyType.BOOLEAN_BYTE:
+              case PropertyType.UINT16:
+              case PropertyType.INT32:
+              case PropertyType.FLOAT:
                 element = Number(span.innerText)
                 break
-              case 11:
+              case PropertyType.NAME:
                 element = span.dataset.value
                 break
               default:

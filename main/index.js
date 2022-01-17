@@ -3,6 +3,7 @@ const {app, BrowserWindow, dialog, ipcMain, Menu, shell} = require('electron')
 const {default: Conf} = require('conf')
 const pkg = require('../package.json')
 const UPackage = require('../lib/upackage')
+const {PropertyType} = require('../lib/uexport')
 
 const UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID = 'upackageOpenDialogDefaultPath'
 const UPACKAGE_SAVE_DIALOG_DEFAULT_PATH_ID = 'upackageSaveDialogDefaultPath'
@@ -197,8 +198,8 @@ function handleFind() {
 function writePropertyValue(value, type, file) {
   let number
   switch (type) {
-    case 1:
-    case 7:
+    case PropertyType.BOOLEAN:
+    case PropertyType.INT32:
       number = Number(value)
       if (isNaN(number)) {
         throw new Error('Value must be a number')
@@ -206,8 +207,8 @@ function writePropertyValue(value, type, file) {
 
       file.writeInt32(number)
       break
-    case 2:
-    case 3:
+    case PropertyType.BYTE:
+    case PropertyType.BOOLEAN_BYTE:
       number = Number(value)
       if (isNaN(number)) {
         throw new Error('Value must be a number')
@@ -215,7 +216,7 @@ function writePropertyValue(value, type, file) {
 
       file.writeByte(number)
       break
-    case 4:
+    case PropertyType.UINT16:
       number = Number(value)
       if (isNaN(number)) {
         throw new Error('Value must be a number')
@@ -223,7 +224,7 @@ function writePropertyValue(value, type, file) {
 
       file.writeInt16(number)
       break
-    case 9:
+    case PropertyType.FLOAT:
       number = Number(value)
       if (isNaN(number)) {
         throw new Error('Value must be a number')
@@ -231,7 +232,7 @@ function writePropertyValue(value, type, file) {
 
       file.writeFloat(number)
       break
-    case 11:
+    case PropertyType.NAME:
       file.writeFName(value)
       break
     default:
@@ -251,9 +252,9 @@ function writePropertyArrayElement(value, index, type, file) {
 
   let number
   switch (type) {
-    case 1:
-    case 2:
-    case 3:
+    case PropertyType.BOOLEAN:
+    case PropertyType.BYTE:
+    case PropertyType.BOOLEAN_BYTE:
       number = Number(value)
       if (isNaN(number)) {
         throw new Error('Value must be a number')
@@ -262,7 +263,7 @@ function writePropertyArrayElement(value, index, type, file) {
       file.pos += index
       file.writeByte(number)
       break
-    case 4:
+    case PropertyType.UINT16:
       number = Number(value)
       if (isNaN(number)) {
         throw new Error('Value must be a number')
@@ -271,7 +272,7 @@ function writePropertyArrayElement(value, index, type, file) {
       file.pos += index * 2
       file.writeInt16(number)
       break
-    case 7:
+    case PropertyType.INT32:
       number = Number(value)
       if (isNaN(number)) {
         throw new Error('Value must be a number')
@@ -280,7 +281,7 @@ function writePropertyArrayElement(value, index, type, file) {
       file.pos += index * 4
       file.writeInt32(number)
       break
-    case 9:
+    case PropertyType.FLOAT:
       number = Number(value)
       if (isNaN(number)) {
         throw new Error('Value must be a number')
@@ -289,7 +290,7 @@ function writePropertyArrayElement(value, index, type, file) {
       file.pos += index * 4
       file.writeFloat(number)
       break
-    case 11:
+    case PropertyType.NAME:
       file.pos += index * 8
       file.writeFName(value)
       break
