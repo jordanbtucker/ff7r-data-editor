@@ -131,6 +131,7 @@ function loadEntries(entries) {
             case PropertyType.FLOAT:
               span.innerText = String(element)
               span.contentEditable = 'true'
+              validateProperty(prop.type, span, originalElement)
 
               span.addEventListener('focus', () => {
                 getSelection().selectAllChildren(span)
@@ -267,6 +268,7 @@ function loadEntries(entries) {
           case PropertyType.FLOAT:
             td.innerText = String(value)
             td.contentEditable = 'true'
+            validateProperty(prop.type, td, originalValue)
 
             td.addEventListener('focus', () => {
               getSelection().selectAllChildren(td)
