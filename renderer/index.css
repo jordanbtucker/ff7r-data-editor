@@ -46,14 +46,6 @@
   color: var(--bs-secondary);
 }
 
-#entries.txt-ids .txt-value {
-  display: none;
-}
-
-#entries.txt-values .txt-id {
-  display: none;
-}
-
 #entries .txt-value {
   display: inline-block;
   font-style: italic;
@@ -65,6 +57,14 @@
 
 #entries .element .txt-value {
   display: inline;
+}
+
+#entries.txt-ids .txt-value {
+  display: none;
+}
+
+#entries.txt-values .txt-id {
+  display: none;
 }
 
 #entries .found {

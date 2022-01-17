@@ -20,6 +20,7 @@ and this project adheres to
 - The Save menu option is now disabled until a file has been opened.
 - The correct filename now shows in the save notificaiton.
 - A visual bug causing some text to appear over headers is fixed.
+- A bug causing text values to appear next to text IDs is fixed.
 
 ## [1.0.0-b.7] - 2022-01-11
 
