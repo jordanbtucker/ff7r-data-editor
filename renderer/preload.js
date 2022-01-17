@@ -602,7 +602,7 @@ function getEntries({dirtyOnly} = {dirtyOnly: true}) {
                 element = Number(span.innerText)
                 break
               case PropertyType.STRING:
-                txtID = td.querySelector('.txt-id')
+                txtID = span.querySelector('.txt-id')
                 if (txtID != null) {
                   element = txtID.innerText
                 } else {
