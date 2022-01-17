@@ -42,7 +42,7 @@
   border-color: var(--bs-danger);
 }
 
-#entries td.disabled {
+#entries .disabled {
   color: var(--bs-secondary);
 }
 
@@ -54,7 +54,7 @@
   display: none;
 }
 
-#entries span.txt-value {
+#entries .txt-value {
   display: inline-block;
   font-style: italic;
   max-width: 30em;
@@ -63,7 +63,7 @@
   white-space: nowrap;
 }
 
-#entries .element span.txt-value {
+#entries .element .txt-value {
   display: inline;
 }
 
