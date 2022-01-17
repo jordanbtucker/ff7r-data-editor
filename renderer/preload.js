@@ -121,7 +121,6 @@ function loadEntries(entries) {
           const originalElement = String(originalEntry[prop.name][j])
           const span = document.createElement('span')
           span.classList.add('element')
-          span.dataset.dataType = String(prop.type)
 
           switch (prop.type) {
             case PropertyType.BOOLEAN:
@@ -138,7 +137,7 @@ function loadEntries(entries) {
               })
 
               span.addEventListener('blur', () => {
-                validateProperty(span, originalElement)
+                validateProperty(prop.type, span, originalElement)
               })
               break
 
@@ -259,8 +258,6 @@ function loadEntries(entries) {
           }
         }
       } else {
-        td.dataset.dataType = String(prop.type)
-
         switch (prop.type) {
           case PropertyType.BOOLEAN:
           case PropertyType.BYTE:
@@ -276,7 +273,7 @@ function loadEntries(entries) {
             })
 
             td.addEventListener('blur', () => {
-              validateProperty(td, originalValue)
+              validateProperty(prop.type, td, originalValue)
             })
             break
 
@@ -456,12 +453,16 @@ function getPropertyRange(type) {
   return {min, max}
 }
 
-function validateProperty(element, originalValue) {
+/**
+ * @param {number} type
+ * @param {HTMLElement} element
+ * @param {string} originalValue
+ */
+function validateProperty(type, element, originalValue) {
   if (element.innerText !== originalValue) {
     element.dataset.isDirty = ''
 
     let number
-    const type = Number(element.dataset.dataType)
     const {min, max} = getPropertyRange(type)
     switch (type) {
       case PropertyType.BOOLEAN:
