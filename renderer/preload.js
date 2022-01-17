@@ -5,7 +5,7 @@ const txtRes = require('../lib/text-resource.json')
 const pkg = require('../package.json')
 
 /**
- * @typedef {{_tag: string} & Record<string, string | number | string[] | number[]>} SparseEntry
+ * @typedef {{$tag: string} & Record<string, string | number | string[] | number[]>} SparseEntry
  */
 
 /** @type {import('../lib/upackage').IUPackage} */
@@ -96,7 +96,7 @@ function loadUPackage(json) {
     tr.appendChild(indexTH)
 
     const tagTH = document.createElement('th')
-    tagTH.innerText = entry._tag
+    tagTH.innerText = entry.$tag
     tr.appendChild(tagTH)
 
     for (const prop of uexp.props) {
@@ -530,7 +530,7 @@ function getEntries() {
   for (let i = 0; i < tbody.rows.length; i++) {
     const tr = tbody.rows.item(i)
     const tagTD = tr.cells.item(1)
-    const entry = {_tag: tagTD.innerText}
+    const entry = {$tag: tagTD.innerText}
     for (let j = 2; j < tr.cells.length; j++) {
       const td = tr.cells.item(j)
       if (td.dataset.isDirty != null) {
