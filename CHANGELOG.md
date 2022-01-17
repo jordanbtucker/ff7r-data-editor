@@ -10,7 +10,7 @@ and this project adheres to
 
 ### Added
 
-- Data can now be exported to CSV files.
+- Data can now be imported and exported to and from CSV files.
 
 ### Changed
 

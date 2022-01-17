@@ -490,6 +490,14 @@ function saveUPackage() {
   ipcRenderer.send('upackage-saved', entries)
 }
 
+ipcRenderer.on('csv-imported', (event, entries) => {
+  csvImported(entries)
+})
+
+function csvImported(entries) {
+  loadEntries(entries)
+}
+
 ipcRenderer.on('export-csv', exportCSV)
 
 function exportCSV() {
