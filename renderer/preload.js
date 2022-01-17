@@ -63,6 +63,15 @@ ipcRenderer.on('upackage-opened', (event, json) => {
  */
 function loadUPackage(json) {
   upackage = JSON.parse(json)
+  loadEntries(upackage.uexp.entries)
+  setTitle()
+  document.getElementById('save-file-button').disabled = false
+}
+
+/**
+ * @param {SparseEntry[]} entries
+ */
+function loadEntries(entries) {
   const uexp = upackage.uexp
   const table = document.getElementById('entries')
   const thead = document.createElement('thead')
@@ -86,8 +95,9 @@ function loadUPackage(json) {
 
   const tbody = document.createElement('tbody')
 
-  for (let i = 0; i < uexp.entries.length; i++) {
-    const entry = uexp.entries[i]
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i]
+    const originalEntry = uexp.entries[i]
 
     const tr = document.createElement('tr')
 
@@ -101,13 +111,14 @@ function loadUPackage(json) {
 
     for (const prop of uexp.props) {
       const td = document.createElement('td')
-      const value = entry[prop.name]
-      const originalValue = String(value)
+      const value =
+        entry[prop.name] != null ? entry[prop.name] : originalEntry[prop.name]
+      const originalValue = String(originalEntry[prop.name])
 
       if (prop.name.endsWith('_Array')) {
         for (let j = 0; j < value.length; j++) {
           const element = value[j]
-          const originalElement = String(element)
+          const originalElement = String(originalEntry[prop.name][j])
           const span = document.createElement('span')
           span.classList.add('element')
           span.dataset.dataType = String(prop.type)
@@ -515,10 +526,6 @@ function loadUPackage(json) {
   }
 
   table.replaceChildren(thead, tbody)
-
-  setTitle()
-
-  document.getElementById('save-file-button').disabled = false
 }
 
 /**
