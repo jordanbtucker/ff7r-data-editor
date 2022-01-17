@@ -179,7 +179,7 @@ async function upackageSaved(entries) {
       uexp.filename = filePath
       await uexp.write()
       conf.set(UPACKAGE_SAVE_DIALOG_DEFAULT_PATH_ID, dirname(filePath))
-      mainWindow.send('upackage-saved', upackage.uexpFilename)
+      mainWindow.send('upackage-saved', filePath)
     }
   } catch (err) {
     dialog.showMessageBoxSync({message: err.stack})

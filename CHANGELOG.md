@@ -18,6 +18,7 @@ and this project adheres to
 - Boolean values in arrays are read properly now. This fixes an issue with
   `BattleAICharaSpec` files.
 - The Save menu option is now disabled until a file has been opened.
+- The correct filename now shows in the save notificaiton.
 
 ## [1.0.0-b.7] - 2022-01-11
 
