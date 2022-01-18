@@ -9,15 +9,18 @@
     "npm": ">=7"
   },
   "scripts": {
-    "build": "electron-packager . --out dist --overwrite",
+    "build": "run-s package clean zip",
+    "clean": "rimraf dist/ff7r-data-editor-win32-x64.zip",
     "eslint": "eslint --fix .",
     "lint": "run-s eslint prettier",
+    "package": "electron-packager . --out dist --overwrite",
     "prebuild": "npm install",
     "prepare": "husky install",
     "prettier": "prettier --loglevel warn -w .",
     "preversion": "npm run lint",
     "start": "npx electron main/index.js",
-    "version": "git add CHANGELOG.md"
+    "version": "git add CHANGELOG.md",
+    "zip": "7z a -tzip dist/ff7r-data-editor-win32-x64.zip ./dist/ff7r-data-editor-win32-x64/"
   },
   "author": "Jordan Tucker <jordanbtucker@gmail.com> (https://github.com/jordanbtucker)",
   "license": "MIT",
@@ -44,6 +47,7 @@
     "husky": "^7.0.4",
     "lint-staged": "^12.1.7",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "rimraf": "^3.0.2"
   }
 }
