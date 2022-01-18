@@ -496,6 +496,7 @@ async function csvExported(entries) {
     if (!canceled) {
       await writeFile(filePath, csv)
       conf.set(CSV_DIALOG_DEFAULT_PATH_ID, filePath)
+      mainWindow.webContents.send('csv-exported', filePath)
     }
   } catch (err) {
     dialog.showMessageBoxSync({message: err.stack})

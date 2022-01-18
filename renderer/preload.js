@@ -507,6 +507,14 @@ function exportCSV() {
   ipcRenderer.send('csv-exported', entries)
 }
 
+ipcRenderer.on('csv-exported', (event, filename) => {
+  csvExported(filename)
+})
+
+function csvExported(filename) {
+  showToast(`${basename(filename)} has been saved.`)
+}
+
 ipcRenderer.on('upackage-saved', (event, filename) => {
   upackageSaved(filename)
 })
