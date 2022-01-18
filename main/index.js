@@ -344,6 +344,8 @@ async function importCSV() {
   }
 }
 
+const textFormulaRegExp = /^="(.+)"$/
+
 /**
  * @param {number} type
  * @param {number | string} value
@@ -372,6 +374,7 @@ function validateProperty(
   const uassetBasename = basename(uassetFilename)
 
   let number
+  let textFormulaMatch
   switch (type) {
     case PropertyType.BOOLEAN:
     case PropertyType.BYTE:
@@ -379,7 +382,13 @@ function validateProperty(
     case PropertyType.UINT16:
     case PropertyType.INT32:
     case PropertyType.FLOAT:
-      number = Number(value)
+      textFormulaMatch = textFormulaRegExp.exec(value)
+      if (textFormulaMatch != null) {
+        number = Number(textFormulaMatch[1])
+      } else {
+        number = Number(value)
+      }
+
       if (isNaN(number)) {
         throw new TypeError(
           `Invalid value for field ${field} in ${csvBasename} on line ${lineNumber}. Expected a number, got '${value}'`,
