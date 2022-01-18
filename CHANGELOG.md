@@ -15,15 +15,15 @@ and this project adheres to
 
 ### Changed
 
-- The Find feature works on headers now.
-- The Open File window now remembers the last used location.
+- The Find feature works on headers.
+- The Open File window remembers the last used location.
 
 ### Fixed
 
-- Boolean values in arrays are read properly now. This fixes an issue with
+- Boolean values in arrays are read properly. This fixes an issue with
   `BattleAICharaSpec` files.
-- The Save menu option is now disabled until a file has been opened.
-- The correct filename now shows in the save notificaiton.
+- The Save menu option is disabled until a file has been opened.
+- The correct filename shows in the save notificaiton.
 - A visual bug causing some text to appear over headers is fixed.
 - A bug causing text values to appear next to text IDs is fixed.
 - Errors are less likely to cause silent failures.
