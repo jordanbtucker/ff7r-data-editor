@@ -1,4 +1,5 @@
 const {readFile, writeFile} = require('fs/promises')
+const os = require('os')
 const {basename, dirname, join} = require('path')
 const {app, BrowserWindow, dialog, ipcMain, Menu, shell} = require('electron')
 const {default: Conf} = require('conf')
@@ -113,7 +114,7 @@ function createMainWindow() {
           },
         },
         {
-          label: 'Report a Bug...',
+          label: 'Report an Issue...',
           click: async () => {
             await shell.openExternal(pkg.bugs.url)
           },
@@ -138,16 +139,16 @@ let upackage
 ipcMain.on('open-upackage', openUPackage)
 
 async function openUPackage() {
-  const {canceled, filePaths} = await dialog.showOpenDialog({
-    defaultPath: conf.get(UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID),
-    filters: [
-      {name: 'UAsset files', extensions: ['uasset']},
-      {name: 'All files', extensions: ['*']},
-    ],
-  })
+  try {
+    const {canceled, filePaths} = await dialog.showOpenDialog({
+      defaultPath: conf.get(UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID),
+      filters: [
+        {name: 'UAsset files', extensions: ['uasset']},
+        {name: 'All files', extensions: ['*']},
+      ],
+    })
 
-  if (!canceled) {
-    try {
+    if (!canceled) {
       upackage = new UPackage(filePaths[0])
       await upackage.read()
       mainWindow.webContents.send('upackage-opened', JSON.stringify(upackage))
@@ -156,9 +157,9 @@ async function openUPackage() {
       menu.getMenuItemById('import').enabled = true
       menu.getMenuItemById('export').enabled = true
       conf.set(UPACKAGE_OPEN_DIALOG_DEFAULT_PATH_ID, dirname(filePaths[0]))
-    } catch (err) {
-      dialog.showMessageBoxSync({message: err.stack})
     }
+  } catch (err) {
+    reportError(err)
   }
 }
 
@@ -214,7 +215,7 @@ async function upackageSaved(entries) {
       mainWindow.send('upackage-saved', filePath)
     }
   } catch (err) {
-    dialog.showMessageBoxSync({message: err.stack})
+    reportError(err)
   }
 }
 
@@ -340,7 +341,7 @@ async function importCSV() {
       mainWindow.webContents.send('csv-imported', csvEntries)
     }
   } catch (err) {
-    dialog.showMessageBoxSync({message: err.stack})
+    reportError(err)
   }
 }
 
@@ -529,7 +530,7 @@ async function csvExported(entries) {
       mainWindow.webContents.send('csv-exported', filePath)
     }
   } catch (err) {
-    dialog.showMessageBoxSync({message: err.stack})
+    reportError(err)
   }
 }
 
@@ -639,5 +640,57 @@ function writePropertyArrayElement(value, index, type, file) {
       break
     default:
       throw new Error(`Unsupported property type ${type}`)
+  }
+}
+
+ipcMain.on('error', (event, err) => {
+  reportError(err)
+})
+
+function reportError(err) {
+  const buttonID = dialog.showMessageBoxSync(mainWindow, {
+    type: 'error',
+    title: 'Error',
+    message: err.stack,
+    buttons: ['Report This Issue', 'Close'],
+    noLink: true,
+    defaultId: 1,
+    cancelId: 1,
+  })
+
+  if (buttonID === 0) {
+    const issueURL = new URL(pkg.bugs.url)
+    issueURL.pathname += '/new'
+    issueURL.searchParams.set('title', err.message)
+    issueURL.searchParams.set(
+      'body',
+      `Your issue may already be reported.
+Please search on the [issue tracker](${pkg.bugs.url}) before creating one.
+
+## Error Message
+${err.message}
+
+## Expected Behavior
+
+
+## Actual Behavior
+
+
+## Steps to Reproduce the Problem
+1.
+2.
+3.
+
+## Error Stack
+\`\`\`
+${err.stack}
+\`\`\`
+
+## Specifications
+- **Version:** ${pkg.version}
+- **Platform:** ${os.platform()} / ${os.version()}
+`,
+    )
+    shell.openExternal(issueURL.toString())
   }
 }

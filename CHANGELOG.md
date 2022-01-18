@@ -10,7 +10,8 @@ and this project adheres to
 
 ### Added
 
-- Data can now be imported and exported to and from CSV files.
+- Data can be imported and exported to and from CSV files.
+- Errors can easily be reported to the issue tracker.
 
 ### Changed
 
@@ -25,6 +26,7 @@ and this project adheres to
 - The correct filename now shows in the save notificaiton.
 - A visual bug causing some text to appear over headers is fixed.
 - A bug causing text values to appear next to text IDs is fixed.
+- Errors are less likely to cause silent failures.
 
 ## [1.0.0-b.7] - 2022-01-11
 

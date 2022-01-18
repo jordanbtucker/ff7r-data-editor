@@ -12,23 +12,27 @@ const pkg = require('../package.json')
 let upackage
 
 window.addEventListener('DOMContentLoaded', () => {
-  setTitle()
-  setupOpenAndSaveButtons()
+  try {
+    setTitle()
+    setupOpenAndSaveButtons()
 
-  document
-    .getElementById('show-txt-ids-checkbox')
-    .addEventListener('change', event => {
-      const entries = document.getElementById('entries')
-      if (event.target.checked) {
-        entries.classList.remove('txt-values')
-        entries.classList.add('txt-ids')
-      } else {
-        entries.classList.remove('txt-ids')
-        entries.classList.add('txt-values')
-      }
-    })
+    document
+      .getElementById('show-txt-ids-checkbox')
+      .addEventListener('change', event => {
+        const entries = document.getElementById('entries')
+        if (event.target.checked) {
+          entries.classList.remove('txt-values')
+          entries.classList.add('txt-ids')
+        } else {
+          entries.classList.remove('txt-ids')
+          entries.classList.add('txt-values')
+        }
+      })
 
-  setupFind()
+    setupFind()
+  } catch (err) {
+    ipcRenderer.send('error', err)
+  }
 })
 
 function setTitle() {
@@ -62,107 +66,115 @@ ipcRenderer.on('upackage-opened', (event, json) => {
  * @param {string} json
  */
 function loadUPackage(json) {
-  upackage = JSON.parse(json)
-  loadEntries(upackage.uexp.entries)
-  setTitle()
-  document.getElementById('save-file-button').disabled = false
+  try {
+    upackage = JSON.parse(json)
+    loadEntries(upackage.uexp.entries)
+    setTitle()
+    document.getElementById('save-file-button').disabled = false
+  } catch (err) {
+    ipcRenderer.send('error', err)
+  }
 }
 
 /**
  * @param {SparseEntry[]} entries
  */
 function loadEntries(entries) {
-  const uexp = upackage.uexp
-  const table = document.getElementById('entries')
-  const thead = document.createElement('thead')
-  const tr = document.createElement('tr')
-
-  const indexTH = document.createElement('th')
-  indexTH.innerText = '#'
-  tr.appendChild(indexTH)
-
-  const tagTH = document.createElement('th')
-  tagTH.innerText = 'Tag'
-  tr.appendChild(tagTH)
-
-  for (const prop of uexp.props) {
-    const th = document.createElement('th')
-    th.innerText = prop.name
-    tr.appendChild(th)
-  }
-
-  thead.appendChild(tr)
-
-  const tbody = document.createElement('tbody')
-
-  for (let i = 0; i < entries.length; i++) {
-    const entry = entries[i]
-    const originalEntry = uexp.entries[i]
-
+  try {
+    const uexp = upackage.uexp
+    const table = document.getElementById('entries')
+    const thead = document.createElement('thead')
     const tr = document.createElement('tr')
 
     const indexTH = document.createElement('th')
-    indexTH.innerText = i
+    indexTH.innerText = '#'
     tr.appendChild(indexTH)
 
     const tagTH = document.createElement('th')
-    tagTH.innerText = entry.$tag
+    tagTH.innerText = 'Tag'
     tr.appendChild(tagTH)
 
     for (const prop of uexp.props) {
-      const td = document.createElement('td')
-      const value =
-        entry[prop.name] != null ? entry[prop.name] : originalEntry[prop.name]
-      const originalValue = String(originalEntry[prop.name])
-
-      if (prop.name.endsWith('_Array')) {
-        for (let j = 0; j < value.length; j++) {
-          const element = value[j]
-          const originalElement = String(originalEntry[prop.name][j])
-          const span = document.createElement('span')
-          span.classList.add('element')
-          loadProperty(prop, element, originalElement, span, td)
-          td.appendChild(span)
-
-          if (j !== value.length - 1) {
-            td.appendChild(document.createTextNode(', '))
-          }
-        }
-      } else {
-        loadProperty(prop, value, originalValue, td)
-      }
-
-      td.addEventListener('keydown', event => {
-        if (event.key === 'ArrowDown' || event.key === 'Enter') {
-          event.preventDefault()
-          const nextTR = td.parentElement.nextElementSibling
-          if (nextTR != null) {
-            const nextTD = nextTR.cells.item(td.cellIndex)
-            nextTD.focus()
-            if (td.contentEditable === 'true') {
-              getSelection().selectAllChildren(nextTD)
-            }
-          }
-        } else if (event.key === 'ArrowUp') {
-          event.preventDefault()
-          const prevTR = td.parentElement.previousElementSibling
-          if (prevTR != null) {
-            const prevTD = prevTR.cells.item(td.cellIndex)
-            prevTD.focus()
-            if (td.contentEditable === 'true') {
-              getSelection().selectAllChildren(prevTD)
-            }
-          }
-        }
-      })
-
-      tr.appendChild(td)
+      const th = document.createElement('th')
+      th.innerText = prop.name
+      tr.appendChild(th)
     }
 
-    tbody.appendChild(tr)
-  }
+    thead.appendChild(tr)
 
-  table.replaceChildren(thead, tbody)
+    const tbody = document.createElement('tbody')
+
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i]
+      const originalEntry = uexp.entries[i]
+
+      const tr = document.createElement('tr')
+
+      const indexTH = document.createElement('th')
+      indexTH.innerText = i
+      tr.appendChild(indexTH)
+
+      const tagTH = document.createElement('th')
+      tagTH.innerText = entry.$tag
+      tr.appendChild(tagTH)
+
+      for (const prop of uexp.props) {
+        const td = document.createElement('td')
+        const value =
+          entry[prop.name] != null ? entry[prop.name] : originalEntry[prop.name]
+        const originalValue = String(originalEntry[prop.name])
+
+        if (prop.name.endsWith('_Array')) {
+          for (let j = 0; j < value.length; j++) {
+            const element = value[j]
+            const originalElement = String(originalEntry[prop.name][j])
+            const span = document.createElement('span')
+            span.classList.add('element')
+            loadProperty(prop, element, originalElement, span, td)
+            td.appendChild(span)
+
+            if (j !== value.length - 1) {
+              td.appendChild(document.createTextNode(', '))
+            }
+          }
+        } else {
+          loadProperty(prop, value, originalValue, td)
+        }
+
+        td.addEventListener('keydown', event => {
+          if (event.key === 'ArrowDown' || event.key === 'Enter') {
+            event.preventDefault()
+            const nextTR = td.parentElement.nextElementSibling
+            if (nextTR != null) {
+              const nextTD = nextTR.cells.item(td.cellIndex)
+              nextTD.focus()
+              if (td.contentEditable === 'true') {
+                getSelection().selectAllChildren(nextTD)
+              }
+            }
+          } else if (event.key === 'ArrowUp') {
+            event.preventDefault()
+            const prevTR = td.parentElement.previousElementSibling
+            if (prevTR != null) {
+              const prevTD = prevTR.cells.item(td.cellIndex)
+              prevTD.focus()
+              if (td.contentEditable === 'true') {
+                getSelection().selectAllChildren(prevTD)
+              }
+            }
+          }
+        })
+
+        tr.appendChild(td)
+      }
+
+      tbody.appendChild(tr)
+    }
+
+    table.replaceChildren(thead, tbody)
+  } catch (err) {
+    ipcRenderer.send('error', err)
+  }
 }
 
 /**
@@ -484,10 +496,14 @@ function getEntries({dirtyOnly} = {dirtyOnly: true}) {
 ipcRenderer.on('save-upackage', saveUPackage)
 
 function saveUPackage() {
-  // Focus away from entries to ensure they are saved.
-  document.getElementById('save-file-button').focus()
-  const entries = getEntries()
-  ipcRenderer.send('upackage-saved', entries)
+  try {
+    // Focus away from entries to ensure they are saved.
+    document.getElementById('save-file-button').focus()
+    const entries = getEntries()
+    ipcRenderer.send('upackage-saved', entries)
+  } catch (err) {
+    ipcRenderer.send('error', err)
+  }
 }
 
 ipcRenderer.on('csv-imported', (event, entries) => {
@@ -501,10 +517,14 @@ function csvImported(entries) {
 ipcRenderer.on('export-csv', exportCSV)
 
 function exportCSV() {
-  // Focus away from entries to ensure they are saved.
-  document.getElementById('save-file-button').focus()
-  const entries = getEntries({dirtyOnly: false})
-  ipcRenderer.send('csv-exported', entries)
+  try {
+    // Focus away from entries to ensure they are saved.
+    document.getElementById('save-file-button').focus()
+    const entries = getEntries({dirtyOnly: false})
+    ipcRenderer.send('csv-exported', entries)
+  } catch (err) {
+    ipcRenderer.send('error', err)
+  }
 }
 
 ipcRenderer.on('csv-exported', (event, filename) => {
@@ -530,15 +550,19 @@ function upackageSaved(filename) {
  * @param {string} message
  */
 function showToast(message) {
-  const toast = document.getElementById('toast')
-  const toastBody = toast.querySelector('.toast-body')
-  toastBody.innerText = message
-  toast.classList.add('show')
+  try {
+    const toast = document.getElementById('toast')
+    const toastBody = toast.querySelector('.toast-body')
+    toastBody.innerText = message
+    toast.classList.add('show')
 
-  const closeButton = toast.querySelector('.btn-close')
-  closeButton.addEventListener('click', () => {
-    toast.classList.remove('show')
-  })
+    const closeButton = toast.querySelector('.btn-close')
+    closeButton.addEventListener('click', () => {
+      toast.classList.remove('show')
+    })
+  } catch (err) {
+    ipcRenderer.send('error', err)
+  }
 }
 
 function setupFind() {
