@@ -408,6 +408,29 @@ ipcMain.on('csv-exported', (event, entries) => {
  */
 async function csvExported(entries) {
   try {
+    const {response} = await dialog.showMessageBox(mainWindow, {
+      title: 'How should numbers be exported?',
+      message:
+        'Microsoft Excel and Google Sheets do not preserve numbers correctly unless they are exported as text formulas. Other CSV applications may not be able to read numbers as text formulas.',
+      buttons: [
+        'Export numbers as text formulas',
+        'Export numbers as-is',
+        'Cancel',
+      ],
+    })
+
+    let exportNumbersAsText
+    switch (response) {
+      case 0:
+        exportNumbersAsText = true
+        break
+      case 1:
+        exportNumbersAsText = false
+        break
+      case 2:
+        return
+    }
+
     const {uexp} = upackage
     const {props} = uexp
     const fields = ['Tag']
@@ -424,7 +447,7 @@ async function csvExported(entries) {
             const field = `${prop.name}[${j}]`
             const element = value[j]
 
-            if (typeof element === 'number') {
+            if (typeof value === 'number' && exportNumbersAsText) {
               line[field] = `="${element}"`
             } else {
               line[field] = element
@@ -438,7 +461,7 @@ async function csvExported(entries) {
             columnSizes[prop.name] = value.length
           }
         } else {
-          if (typeof value === 'number') {
+          if (typeof value === 'number' && exportNumbersAsText) {
             line[prop.name] = `="${value}"`
           } else {
             line[prop.name] = value
