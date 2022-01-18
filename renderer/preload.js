@@ -515,9 +515,16 @@ ipcRenderer.on('upackage-saved', (event, filename) => {
  * @param {string} filename
  */
 function upackageSaved(filename) {
-  const toast = document.getElementById('save-file-toast')
+  showToast(`${basename(filename)} has been saved.`)
+}
+
+/**
+ * @param {string} message
+ */
+function showToast(message) {
+  const toast = document.getElementById('toast')
   const toastBody = toast.querySelector('.toast-body')
-  toastBody.innerText = `${basename(filename)} has been saved.`
+  toastBody.innerText = message
   toast.classList.add('show')
 
   const closeButton = toast.querySelector('.btn-close')
