@@ -253,7 +253,6 @@ async function importCSV() {
       const {uasset, uexp} = upackage
       const {props, entries} = uexp
       const csvBasename = basename(filePaths[0])
-      const uassetBasename = basename(uasset.filename)
       const uexpBasename = basename(uexp.filename)
       const csvEntries = []
 
@@ -308,87 +307,29 @@ async function importCSV() {
               }
 
               const entryElement = entryValue[index]
-              let number
-              switch (prop.type) {
-                case PropertyType.BOOLEAN:
-                case PropertyType.BYTE:
-                case PropertyType.BOOLEAN_BYTE:
-                case PropertyType.UINT16:
-                case PropertyType.INT32:
-                case PropertyType.FLOAT:
-                  number = Number(value)
-                  if (isNaN(number)) {
-                    throw new TypeError(
-                      `Invalid value for field ${field} in ${csvBasename} on line ${lineNumber}. Expected a number, got '${value}'`,
-                    )
-                  }
-
-                  csvEntry[propName][index] = number
-                  break
-                case PropertyType.STRING:
-                  if (value !== entryElement) {
-                    throw new Error(
-                      `Unsupported string modification for field ${field} in ${csvBasename} on line ${lineNumber}`,
-                    )
-                  }
-
-                  csvEntry[propName][index] = value
-                  break
-                case PropertyType.NAME:
-                  if (!uasset.names.includes(value)) {
-                    throw new RangeError(
-                      `Invalid name '${value}' for field ${field} in ${csvBasename} on line ${lineNumber}. The name does not exist in ${uassetBasename}`,
-                    )
-                  }
-
-                  csvEntry[propName][index] = value
-                  break
-                default:
-                  throw new Error(
-                    `Unsupported property type ${prop.type} in ${uexpBasename}`,
-                  )
-              }
+              csvEntry[propName][index] = validateProperty(
+                prop.type,
+                value,
+                entryElement,
+                field,
+                lineNumber,
+                uasset.names,
+                filePaths[0],
+                uexp.filename,
+                uasset.filename,
+              )
             } else {
-              let number
-              switch (prop.type) {
-                case PropertyType.BOOLEAN:
-                case PropertyType.BYTE:
-                case PropertyType.BOOLEAN_BYTE:
-                case PropertyType.UINT16:
-                case PropertyType.INT32:
-                case PropertyType.FLOAT:
-                  number = Number(value)
-                  if (isNaN(number)) {
-                    throw new TypeError(
-                      `Invalid value for field ${field} in ${csvBasename} on line ${lineNumber}. Expected a number, got '${value}'`,
-                    )
-                  }
-
-                  csvEntry[propName] = number
-                  break
-                case PropertyType.STRING:
-                  if (value !== entryValue) {
-                    throw new Error(
-                      `Unsupported string modification for field ${field} in ${csvBasename} on line ${lineNumber}`,
-                    )
-                  }
-
-                  csvEntry[propName] = value
-                  break
-                case PropertyType.NAME:
-                  if (!uasset.names.includes(value)) {
-                    throw new RangeError(
-                      `Invalid name '${value}' for field ${field} in ${csvBasename} on line ${lineNumber}. The name does not exist in ${uassetBasename}`,
-                    )
-                  }
-
-                  csvEntry[propName] = value
-                  break
-                default:
-                  throw new Error(
-                    `Unsupported property type ${prop.type} in ${uexpBasename}`,
-                  )
-              }
+              csvEntry[propName] = validateProperty(
+                prop.type,
+                value,
+                entryValue,
+                field,
+                lineNumber,
+                uasset.names,
+                filePaths[0],
+                uexp.filename,
+                uasset.filename,
+              )
             }
           }
         }
@@ -400,6 +341,73 @@ async function importCSV() {
     }
   } catch (err) {
     dialog.showMessageBoxSync({message: err.stack})
+  }
+}
+
+/**
+ * @param {number} type
+ * @param {number | string} value
+ * @param {string} originalValue
+ * @param {string} field
+ * @param {number} lineNumber
+ * @param {string[]} names
+ * @param {string} csvFilename
+ * @param {string} uexpFilename
+ * @param {string} uassetFilename
+ * @returns
+ */
+function validateProperty(
+  type,
+  value,
+  originalValue,
+  field,
+  lineNumber,
+  names,
+  csvFilename,
+  uexpFilename,
+  uassetFilename,
+) {
+  const csvBasename = basename(csvFilename)
+  const uexpBasename = basename(uexpFilename)
+  const uassetBasename = basename(uassetFilename)
+
+  let number
+  switch (type) {
+    case PropertyType.BOOLEAN:
+    case PropertyType.BYTE:
+    case PropertyType.BOOLEAN_BYTE:
+    case PropertyType.UINT16:
+    case PropertyType.INT32:
+    case PropertyType.FLOAT:
+      number = Number(value)
+      if (isNaN(number)) {
+        throw new TypeError(
+          `Invalid value for field ${field} in ${csvBasename} on line ${lineNumber}. Expected a number, got '${value}'`,
+        )
+      }
+
+      return number
+
+    case PropertyType.STRING:
+      if (value !== originalValue) {
+        throw new Error(
+          `Unsupported string modification for field ${field} in ${csvBasename} on line ${lineNumber}`,
+        )
+      }
+
+      return value
+
+    case PropertyType.NAME:
+      if (!names.includes(value)) {
+        throw new RangeError(
+          `Invalid name '${value}' for field ${field} in ${csvBasename} on line ${lineNumber}. The name does not exist in ${uassetBasename}`,
+        )
+      }
+
+      return value
+
+    default:
+      throw new Error(`Unsupported property type ${type} in ${uexpBasename}`)
   }
 }
 
