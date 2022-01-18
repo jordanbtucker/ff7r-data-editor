@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.0.0-b.8] - 2022-01-17
+
 ### Added
 
 - Data can be imported and exported to and from CSV files.
@@ -100,7 +102,9 @@ and this project adheres to
 - Initial implementation
 
 [unreleased]:
-  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.7...HEAD
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.8...HEAD
+[1.0.0-b.8]:
+  https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.7...v1.0.0-b.8
 [1.0.0-b.7]:
   https://github.com/jordanbtucker/ff7r-data-editor/compare/v1.0.0-b.6...v1.0.0-b.7
 [1.0.0-b.6]:
