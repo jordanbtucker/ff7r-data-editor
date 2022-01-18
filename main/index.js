@@ -197,9 +197,13 @@ async function upackageSaved(entries) {
       }
     }
 
+    let defaultPath = conf.get(UPACKAGE_SAVE_DIALOG_DEFAULT_PATH_ID)
+    if (defaultPath != null) {
+      defaultPath = join(defaultPath, uexp.filename)
+    }
+
     const {canceled, filePath} = await dialog.showSaveDialog({
-      defaultPath:
-        conf.get(UPACKAGE_SAVE_DIALOG_DEFAULT_PATH_ID) || uexp.filename,
+      defaultPath,
       filters: [{name: 'UExport files', extensions: ['uexp']}],
     })
 
@@ -483,10 +487,19 @@ async function csvExported(entries) {
     }
 
     const csv = Papa.unparse({fields, data})
+
+    let defaultPath = conf.get(CSV_DIALOG_DEFAULT_PATH_ID)
+    if (defaultPath == null) {
+      defaultPath = uexp.filename.replace(/\.uexp$/i, '.csv')
+    } else {
+      defaultPath = join(
+        defaultPath,
+        basename(uexp.filename).replace(/\.uexp$/i, '.csv'),
+      )
+    }
+
     const {canceled, filePath} = await dialog.showSaveDialog({
-      defaultPath:
-        conf.get(CSV_DIALOG_DEFAULT_PATH_ID) ||
-        uexp.filename.replace(/\.uexp$/, '.csv'),
+      defaultPath,
       filters: [
         {name: 'CSV files', extensions: ['csv']},
         {name: 'All files', extensions: ['*']},
@@ -495,7 +508,7 @@ async function csvExported(entries) {
 
     if (!canceled) {
       await writeFile(filePath, csv)
-      conf.set(CSV_DIALOG_DEFAULT_PATH_ID, filePath)
+      conf.set(CSV_DIALOG_DEFAULT_PATH_ID, dirname(filePath))
       mainWindow.webContents.send('csv-exported', filePath)
     }
   } catch (err) {
